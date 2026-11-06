@@ -214,7 +214,7 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    overflow: hidden; /* 슬롯 하단 구멍 밖으로 내려갔을 때 완벽하게 숨김 */
+    overflow: hidden;
     border-radius: 16px;
   }
 
@@ -244,25 +244,23 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   }
 
-  /* 두더지 래퍼: 구멍 바닥 깊은 곳에서 수직으로 솟구침 */
+  /* 두더지 래퍼 */
   .mole-wrapper {
     position: absolute;
     bottom: 12px;
     width: 126px;
     height: 140px;
-    z-index: 2; /* hole-back(1) 위, hole-front(4) 뒤 */
-    transform: translateY(145px); /* 완전히 구멍 아래에 숨김 */
+    z-index: 2;
+    transform: translateY(145px);
     transition: transform 0.14s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     pointer-events: auto;
     cursor: none;
   }
 
-  /* 구멍 밖으로 알맞게 솟구친 상태 */
   .mole-wrapper.up {
     transform: translateY(-8px);
   }
 
-  /* 타격당해 납작해지며 쏙 들어감 */
   .mole-wrapper.hit {
     transform: translateY(45px) scale(0.92, 0.5) !important;
     transition: transform 0.08s ease-in;
@@ -540,7 +538,7 @@
       💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
       💣 <strong>폭탄</strong>: <strong>-200점 감점</strong> & 콤보 초기화!<br>
       🔥 <strong>콤보 보너스</strong>: 1~10콤보(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
-      ⚡ <strong>30초 후 서든데스</strong>: 콤보 타이머(2.0s $\rightarrow$ 0.4s)
+      ⚡ <strong>30초 후 서든데스</strong>: 최소 1마리 보장 & 콤보 타이머(2.0s $\rightarrow$ 0.4s)
     </p>
     <div class="rank-table-wrap">
       <table class="rank-table">
@@ -605,7 +603,7 @@
     currentMaxSurvival: 2.0,
     survivalTimer: 2.0,
     soundEnabled: true,
-    masterVolume: 0.8, // 기본 볼륨 80%
+    masterVolume: 0.8,
     holes: Array(9).fill(null).map(() => ({ active: false, moleType: null, timer: null }))
   };
 
@@ -620,7 +618,6 @@
   let bgmInterval = null;
   let bgmStep = 0;
 
-  // 풍성한 아케이드 멜로디 & 베이스 진행
   const MELODY = [
     261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 261.63, 329.63,
     293.66, 349.23, 440.00, 587.33, 440.00, 349.23, 293.66, 349.23,
@@ -656,7 +653,6 @@
     if (!state.soundEnabled) return;
     initAudio();
     bgmStep = 0;
-    // BGM 연주 템포 (서든데스 시 고속 주행)
     bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 120 : 150);
   }
 
@@ -667,19 +663,16 @@
     }
   }
 
-  // 강화된 BGM 출력 (리드 신스 + 베이스 레이어)
   function playBgmStep() {
     if (!state.isPlaying || !state.soundEnabled || !audioCtx || !masterGain) return;
     const now = audioCtx.currentTime;
 
-    // 1. 리드 신스 (볼륨을 대폭 상향: 0.16)
     const note = MELODY[bgmStep % MELODY.length];
     if (note > 0) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'square';
       osc.frequency.setValueAtTime(note, now);
-      // 부드러운 톤 필터
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(1600, now);
@@ -693,7 +686,6 @@
       osc.stop(now + 0.14);
     }
 
-    // 2. 워킹 베이스 라인 (볼륨 보강: 0.22)
     const bassNote = BASS[bgmStep % BASS.length];
     if (bassNote > 0) {
       const bOsc = audioCtx.createOscillator();
@@ -711,7 +703,6 @@
     bgmStep++;
   }
 
-  // [수정] 지나치게 크지 않도록 게인을 50~60%로 낮춘 타격음
   function playSfx(type) {
     if (!state.soundEnabled || !audioCtx || !masterGain) return;
     try {
@@ -722,7 +713,6 @@
       gain.connect(masterGain);
 
       if (type === 'hit') {
-        // 기존 0.8 -> 0.35로 부드럽고 찰진 소리로 하향
         osc.frequency.setValueAtTime(420, now);
         osc.frequency.exponentialRampToValueAtTime(110, now + 0.11);
         gain.gain.setValueAtTime(0.35, now);
@@ -730,7 +720,6 @@
         osc.start(now);
         osc.stop(now + 0.12);
       } else if (type === 'gold') {
-        // 기존 0.7 -> 0.3으로 하향
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(587, now);
         osc.frequency.setValueAtTime(880, now + 0.08);
@@ -739,7 +728,6 @@
         osc.start(now);
         osc.stop(now + 0.23);
       } else if (type === 'bomb') {
-        // 기존 1.0 -> 0.45로 하향
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(140, now);
         osc.frequency.exponentialRampToValueAtTime(35, now + 0.32);
@@ -763,7 +751,6 @@
     } catch(e) {}
   }
 
-  // 타격 시 나타나는 망치 SVG
   const HAMMER_SVG = `
     <svg viewBox="0 0 100 100" width="100%" height="100%">
       <rect x="28" y="28" width="14" height="64" rx="6" fill="#8d6e63" stroke="#3e2723" stroke-width="3.5" transform="rotate(45 35 60)"/>
@@ -773,7 +760,6 @@
     </svg>
   `;
 
-  // 두더지 SVG
   const MOLE_SVGS = {
     normal: `
       <svg viewBox="0 0 120 130">
@@ -860,7 +846,6 @@
   const countdownOverlay = document.getElementById('countdown-overlay');
   const countdownNum = document.getElementById('countdown-num');
 
-  // 볼륨 슬라이더 및 음소거 토글
   volSlider.addEventListener('input', (e) => {
     initAudio();
     const val = parseFloat(e.target.value) / 100;
@@ -882,7 +867,6 @@
     }
   });
 
-  // 랭킹 스토리지 관리 (TOP 7)
   function getRankings() {
     try {
       const data = localStorage.getItem('whack_rankings_top7');
@@ -919,7 +903,6 @@
   }
   renderRankTable('start-rank-body');
 
-  // [수정] 9개 구멍 생성 (각 구역 슬롯 내부에서만 두더지가 솟구치도록 레이어 분리)
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
     slot.className = 'hole-slot';
@@ -941,7 +924,6 @@
     }, 600);
   }
 
-  // 3초 카운트다운 후 게임 개시
   function requestGameStart() {
     if (state.isCountingDown) return;
     initAudio();
@@ -1012,7 +994,6 @@
     startBgm();
   }
 
-  // 버튼 이벤트 연결
   document.getElementById('btn-start').addEventListener('click', requestGameStart);
   document.getElementById('btn-restart').addEventListener('click', requestGameStart);
   document.getElementById('ctrl-restart').addEventListener('click', requestGameStart);
@@ -1080,6 +1061,11 @@
     viewport.classList.add('sudden-flash');
     showPopText(window.innerWidth / 2, window.innerHeight / 2, '⚡ SUDDEN DEATH! ⚡', '#ff1744');
     startBgm();
+
+    // 서든데스 돌입 즉시 최소 1마리 보장
+    if (getActiveCount() === 0) {
+      spawnMole();
+    }
   }
 
   function getStayDuration() {
@@ -1092,16 +1078,33 @@
     return state.holes.filter(h => h.active).length;
   }
 
+  // [수정] 1. 서든데스 최소 1마리 보장 & 2. 후반부 최소 2마리 ~ 최대 4마리 조정
   function scheduleSpawn() {
     if (!state.isPlaying) return;
 
-    if (getActiveCount() < MAX_CONCURRENT_MOLES) {
-      spawnMole();
+    const activeCount = getActiveCount();
+    const isLateGame = state.timeLeft <= 15 || state.isSuddenDeath;
+
+    if (isLateGame) {
+      // 후반부: 최소 2마리 ~ 최대 4마리 유지
+      if (activeCount < 2) {
+        const needToSpawn = 2 - activeCount;
+        for (let i = 0; i < needToSpawn; i++) {
+          spawnMole();
+        }
+      } else if (activeCount < MAX_CONCURRENT_MOLES && Math.random() < 0.65) {
+        spawnMole();
+      }
+    } else {
+      // 전반부(15초 이전): 통상 1~3마리 스폰 (최대 4마리 가드)
+      if (activeCount < MAX_CONCURRENT_MOLES) {
+        spawnMole();
+      }
     }
 
     const nextDelay = state.isSuddenDeath 
-      ? 400 + Math.random() * 250
-      : Math.max(380, 850 - ((30 - state.timeLeft) * 15));
+      ? 300 + Math.random() * 200
+      : (isLateGame ? 350 + Math.random() * 250 : Math.max(400, 850 - ((30 - state.timeLeft) * 15)));
 
     spawnTimeout = setTimeout(scheduleSpawn, nextDelay);
   }
@@ -1129,7 +1132,6 @@
 
     const el = document.getElementById(`mole-${slotIdx}`);
     el.innerHTML = MOLE_SVGS[type];
-    // 슬롯 구멍 속에서 위로 솟구치도록 up 클래스 추가
     el.className = 'mole-wrapper up';
 
     const stayTime = getStayDuration();
@@ -1147,9 +1149,13 @@
 
     const el = document.getElementById(`mole-${idx}`);
     if (el) {
-      // 슬롯 구멍 아래로 쏙 들어가 숨겨짐
       el.className = 'mole-wrapper';
       el.innerHTML = '';
+    }
+
+    // [수정] 서든데스 상태에서 두더지가 들어가 화면에 0마리가 되면 즉시 1마리 스폰 보장
+    if (state.isPlaying && state.isSuddenDeath && getActiveCount() === 0) {
+      spawnMole();
     }
   }
 
@@ -1174,7 +1180,6 @@
     const hitX = rect.left + rect.width / 2;
     const hitY = rect.top + rect.height / 3;
 
-    // 타격된 두더지 머리 바로 위에만 망치 생성
     const hammer = document.createElement('div');
     hammer.className = 'hammer-smash';
     hammer.innerHTML = HAMMER_SVG;
