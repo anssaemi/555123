@@ -307,8 +307,10 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.82);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end; /* 두더지 필드 위를 침범하지 않고 하단 전용 구역에 배치 */
     align-items: center;
+    padding-bottom: 24px;
     z-index: 10000;
     backdrop-filter: blur(5px);
   }
@@ -317,21 +319,30 @@
     background: linear-gradient(180deg, #fffde7 0%, #fff 100%);
     border: 6px solid #4e342e;
     border-radius: 28px;
-    padding: 24px 28px;
+    padding: 20px 24px;
     text-align: center;
-    max-width: 460px;
-    width: 90%;
+    max-width: 480px;
+    width: 92%;
     box-shadow: 0 20px 40px rgba(0,0,0,0.85);
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
   }
 
+  /* 0.6초 쿨다운 적용: 모달 표시 직후 연타로 인한 오클릭 방지 */
   .modal-btn-group {
     display: flex;
     justify-content: center;
     gap: 12px;
     margin-top: 14px;
     flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+
+  .btn-cooldown {
+    pointer-events: none !important;
+    opacity: 0.55 !important;
+    filter: grayscale(40%);
+    cursor: not-allowed !important;
   }
 
   .card-modal h1 {
@@ -827,6 +838,16 @@
     startModal.style.display = 'flex';
   }
 
+  // 모달 오픈 시 0.6초 쿨다운을 적용해 연타 중 실수 클릭 방지
+  function applyButtonCooldown(containerSelector) {
+    const group = document.querySelector(containerSelector);
+    if (!group) return;
+    group.classList.add('btn-cooldown');
+    setTimeout(() => {
+      group.classList.remove('btn-cooldown');
+    }, 600);
+  }
+
   // 오디오 토글
   audioToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1134,7 +1155,8 @@
       document.getElementById('record-score').textContent = `${state.score}점 (최대콤보 ${state.maxCombo}연속)`;
       playerNameInput.value = '';
       recordModal.style.display = 'flex';
-      playerNameInput.focus();
+      applyButtonCooldown('#record-modal .modal-btn-group');
+      setTimeout(() => playerNameInput.focus(), 650);
     } else {
       showFinalGameOver(reason);
     }
@@ -1162,6 +1184,7 @@
     document.getElementById('over-maxcombo').textContent = `최고 콤보: ${state.maxCombo}연속`;
     renderLeaderboardTable();
     gameoverModal.style.display = 'flex';
+    applyButtonCooldown('#gameover-modal .modal-btn-group');
   }
 })();
 </script>
