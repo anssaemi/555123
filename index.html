@@ -820,6 +820,11 @@
     gridEl.appendChild(slot);
   }
 
+  // 우클릭 메뉴 차단 (게임 화면 전체 및 필드 영역)
+  window.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+  });
+
   // 커스텀 커서 추적
   window.addEventListener('pointermove', (e) => {
     hammerEl.style.display = 'block';
@@ -828,6 +833,9 @@
   });
 
   window.addEventListener('pointerdown', (e) => {
+    // 마우스 우클릭 등 보조 버튼 클릭 무시 (주 버튼 e.button === 0 만 허용)
+    if (e.button !== undefined && e.button !== 0) return;
+
     initAudio();
     hammerEl.classList.remove('swing');
     void hammerEl.offsetWidth;
@@ -994,6 +1002,9 @@
 
   function onMoleHit(idx, e) {
     if (!state.isPlaying) return;
+    // 마우스 우클릭 등 보조 버튼은 타격으로 인정하지 않음
+    if (e.button !== undefined && e.button !== 0) return;
+
     const hole = state.holes[idx];
     if (!hole.active) return;
 
