@@ -882,7 +882,8 @@
     clearTimeout(spawnTimeout);
 
     gameTickInterval = setInterval(gameTick, 100);
-    scheduleSpawn();
+    // 스타트 버튼 누른 후 0.5초(500ms) 뒤부터 두더지 등장
+    spawnTimeout = setTimeout(scheduleSpawn, 500);
     startBgm();
   }
 
