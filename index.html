@@ -145,7 +145,7 @@
     line-height: 1.1;
   }
 
-  /* 1.0초 콤보 게이지 바 */
+  /* 2.0초 콤보 게이지 바 */
   #combo-gauge-wrap {
     width: 60px;
     height: 6px;
@@ -590,16 +590,16 @@
     <div class="stat-badge">
       <div class="stat-label">COMBO</div>
       <div class="stat-val" id="val-combo">0</div>
-      <div id="combo-gauge-wrap" title="1.5초 콤보 게이지">
+      <div id="combo-gauge-wrap" title="2.0초 콤보 게이지">
         <div id="combo-gauge-fill"></div>
       </div>
     </div>
   </div>
 
-  <!-- 동적 서든데스 게이지 (2.0s -> 0.4s) -->
+  <!-- 동적 서든데스 게이지 (2.5s -> 1.0s) -->
   <div id="survival-container">
     <div id="survival-bar"></div>
-    <div id="survival-text">COMBO SURVIVAL (MAX 2.0s)</div>
+    <div id="survival-text">COMBO SURVIVAL (MAX 2.5s)</div>
   </div>
 
   <!-- 중앙 메인 스테이지 (두더지 필드 + 우측 상시 랭킹) -->
@@ -636,10 +636,11 @@
     <h1>두더지 매니아 DX</h1>
     <p>
       💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
-      ⏱️ <strong>콤보 유지 시간 1.0초</strong>: 1초 안에 연속 타격 시 콤보 유지!<br>
+      ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 시 콤보 유지!<br>
+      🐾 <strong>최소 1마리 상시 노출</strong>: 화면에 항상 두더지 보장!<br>
       💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
       🔥 <strong>콤보 보너스</strong>: 1~10(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
-      ⚡ <strong>30초 후 서든데스</strong>: 최소 1마리 보장 & 콤보 타이머(2.0s $\rightarrow$ 0.4s)
+      ⚡ <strong>30초 후 서든데스</strong>: 콤보 타이머 <strong>2.5초 $\rightarrow$ 1.0초</strong>까지 감소!
     </p>
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
@@ -679,18 +680,22 @@
 (() => {
   window.addEventListener('contextmenu', (e) => e.preventDefault());
 
+  const COMBO_GRACE_PERIOD = 2.0; // 콤보 유지 시간 2초
+  const SUDDEN_DEATH_START = 2.5; // 서든데스 시작 시간 2.5초
+  const SUDDEN_DEATH_MIN = 1.0;   // 서든데스 최종 한계 시간 1.0초
+
   const state = {
     score: 0,
     timeLeft: 30,
     combo: 0,
     maxCombo: 0,
-    comboTimer: 0, // 1.0초 콤보 유지 타이머
+    comboTimer: 0,
     isPlaying: false,
     isCountingDown: false,
     isSuddenDeath: false,
     suddenDuration: 0,
-    currentMaxSurvival: 2.0,
-    survivalTimer: 2.0,
+    currentMaxSurvival: SUDDEN_DEATH_START,
+    survivalTimer: SUDDEN_DEATH_START,
     soundEnabled: true,
     masterVolume: 0.8,
     holes: Array(9).fill(null).map(() => ({ active: false, moleType: null, timer: null }))
@@ -782,7 +787,7 @@
       bOsc.type = 'triangle';
       bOsc.frequency.setValueAtTime(bassNote, now);
       bGain.gain.setValueAtTime(0.22, now);
-      bGain.gain.exponentialRampToValueAtTime(0.01, now + 0.17);
+      bGain.exponentialRampToValueAtTime(0.01, now + 0.17);
       bOsc.connect(bGain);
       bGain.connect(masterGain);
       bOsc.start(now);
@@ -1037,7 +1042,7 @@
 
     state.isPlaying = false;
     state.isCountingDown = true;
-    for (let i = 0; i < 9; i++) clearHole(i);
+    for (let i = 0; i < 9; i++) clearHole(i, false);
 
     let count = 3;
     countdownOverlay.style.display = 'flex';
@@ -1076,10 +1081,10 @@
     state.isPlaying = true;
     state.isSuddenDeath = false;
     state.suddenDuration = 0;
-    state.currentMaxSurvival = 2.0;
-    state.survivalTimer = 2.0;
+    state.currentMaxSurvival = SUDDEN_DEATH_START;
+    state.survivalTimer = SUDDEN_DEATH_START;
 
-    for (let i = 0; i < 9; i++) clearHole(i);
+    for (let i = 0; i < 9; i++) clearHole(i, false);
 
     valScore.textContent = '0';
     valTimer.textContent = '30';
@@ -1089,7 +1094,10 @@
     survivalContainer.style.display = 'none';
 
     gameTickInterval = setInterval(gameTick, 100);
-    spawnTimeout = setTimeout(scheduleSpawn, 500);
+    spawnTimeout = setTimeout(() => {
+      spawnMole();
+      scheduleSpawn();
+    }, 500);
     startBgm();
   }
 
@@ -1121,7 +1129,7 @@
     viewport.classList.remove('sudden-flash');
     survivalContainer.style.display = 'none';
 
-    for (let i = 0; i < 9; i++) clearHole(i);
+    for (let i = 0; i < 9; i++) clearHole(i, false);
 
     renderSideRankTable();
     startModal.style.display = 'flex';
@@ -1131,7 +1139,7 @@
   function gameTick() {
     if (!state.isPlaying) return;
 
-    // 1.0초 콤보 유지 타이머 감축 로직
+    // 2.0초 콤보 유지 타이머 감축 로직
     if (state.combo > 0) {
       state.comboTimer -= 0.1;
       if (state.comboTimer <= 0) {
@@ -1140,11 +1148,16 @@
         valCombo.textContent = '0';
         comboGaugeFill.style.width = '0%';
       } else {
-        const pct = Math.max(0, (state.comboTimer / 1.0) * 100);
+        const pct = Math.max(0, (state.comboTimer / COMBO_GRACE_PERIOD) * 100);
         comboGaugeFill.style.width = pct + '%';
       }
     } else {
       comboGaugeFill.style.width = '0%';
+    }
+
+    // 화면에 상시 최소 1마리 보장
+    if (getActiveCount() === 0) {
+      spawnMole();
     }
 
     if (!state.isSuddenDeath) {
@@ -1153,7 +1166,8 @@
       if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
-      state.currentMaxSurvival = Math.max(0.4, 2.0 - (state.suddenDuration * 0.045));
+      // 서든데스 게이지: 2.5초에서 시작하여 최종 1.0초까지 점진적 감소
+      state.currentMaxSurvival = Math.max(SUDDEN_DEATH_MIN, SUDDEN_DEATH_START - (state.suddenDuration * 0.05));
       state.survivalTimer -= 0.1;
 
       const pct = Math.max(0, (state.survivalTimer / state.currentMaxSurvival) * 100);
@@ -1167,8 +1181,8 @@
   function enterSuddenDeath() {
     state.isSuddenDeath = true;
     state.suddenDuration = 0;
-    state.currentMaxSurvival = 2.0;
-    state.survivalTimer = 2.0;
+    state.currentMaxSurvival = SUDDEN_DEATH_START;
+    state.survivalTimer = SUDDEN_DEATH_START;
 
     labelTimer.textContent = 'MODE';
     valTimer.textContent = 'SURVIVE';
@@ -1177,6 +1191,7 @@
     showPopText(window.innerWidth / 2, window.innerHeight / 2, '⚡ SUDDEN DEATH! ⚡', '#ff1744');
     startBgm();
 
+    // 서든데스 돌입 즉시 최소 1마리 보장
     if (getActiveCount() === 0) {
       spawnMole();
     }
@@ -1208,7 +1223,9 @@
         spawnMole();
       }
     } else {
-      if (activeCount < MAX_CONCURRENT_MOLES) {
+      if (activeCount === 0) {
+        spawnMole();
+      } else if (activeCount < MAX_CONCURRENT_MOLES && Math.random() < 0.75) {
         spawnMole();
       }
     }
@@ -1251,7 +1268,7 @@
     }, stayTime);
   }
 
-  function clearHole(idx) {
+  function clearHole(idx, triggerRespawn = true) {
     const hole = state.holes[idx];
     if (hole.timer) clearTimeout(hole.timer);
     hole.active = false;
@@ -1264,7 +1281,7 @@
       el.innerHTML = '';
     }
 
-    if (state.isPlaying && state.isSuddenDeath && getActiveCount() === 0) {
+    if (triggerRespawn && state.isPlaying && getActiveCount() === 0) {
       spawnMole();
     }
   }
@@ -1321,9 +1338,8 @@
       if (type === 'helmet') basePts = 20;
       if (type === 'gold') basePts = 40;
 
-      // 콤보 증가 및 콤보 유지 시간 1.0초로 갱신
       state.combo++;
-      state.comboTimer = 1.0;
+      state.comboTimer = COMBO_GRACE_PERIOD;
       if (state.combo > state.maxCombo) state.maxCombo = state.combo;
 
       const multiplier = getComboMultiplier(state.combo);
