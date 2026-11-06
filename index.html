@@ -24,10 +24,9 @@
     overflow: hidden;
     font-family: 'Arial Black', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: #1b5e20;
-    cursor: none; /* 필드 내 마우스 포인터 숨김 */
+    cursor: none;
   }
 
-  /* 고화질 밝은 농장/채소밭 실사 배경 */
   #game-viewport {
     position: relative;
     width: 100vw;
@@ -78,15 +77,33 @@
     transform: translateY(2px);
   }
 
+  /* 사운드 & 볼륨 컨트롤러 */
+  #sound-ctrl-wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.55);
+    border: 2px solid #ffd54f;
+    border-radius: 20px;
+    padding: 3px 10px;
+    gap: 6px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  }
+
   #audio-toggle {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
     padding: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 16px;
+  }
+
+  #vol-slider {
+    width: 75px;
+    cursor: pointer;
+    accent-color: #ffb300;
   }
 
   /* 목재 아케이드 전광판 HUD */
@@ -188,6 +205,7 @@
     height: 100%;
   }
 
+  /* 각 구역 슬롯 */
   .hole-slot {
     position: relative;
     width: 100%;
@@ -196,51 +214,57 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    overflow: hidden; /* 슬롯 하단 구멍 밖으로 내려갔을 때 완벽하게 숨김 */
+    border-radius: 16px;
   }
 
+  /* 구멍 깊이감 (어두운 내부) */
   .hole-back {
     position: absolute;
-    bottom: 4px;
-    width: 95%;
-    height: 56px;
-    background: radial-gradient(ellipse at 50% 60%, #150904 0%, #2e170b 60%, #4e2912 100%);
+    bottom: 6px;
+    width: 92%;
+    height: 54px;
+    background: radial-gradient(ellipse at 50% 50%, #110502 0%, #2b1408 65%, #46220e 100%);
     border-radius: 50%;
-    box-shadow: inset 0 10px 16px rgba(0,0,0,0.95);
+    box-shadow: inset 0 12px 18px rgba(0,0,0,0.98);
     z-index: 1;
   }
 
+  /* 앞쪽 흙 둔덕 & 풀잎 테두리 */
   .hole-front {
     position: absolute;
     bottom: -6px;
-    width: 108%;
-    height: 50px;
+    width: 106%;
+    height: 48px;
     background: radial-gradient(ellipse at 50% 85%, #5d4037 0%, #3e2723 65%, transparent 85%);
     border-bottom: 7px solid #2e7d32;
     border-radius: 50%;
     z-index: 4;
     pointer-events: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   }
 
-  /* 두더지 래퍼 */
+  /* 두더지 래퍼: 구멍 바닥 깊은 곳에서 수직으로 솟구침 */
   .mole-wrapper {
     position: absolute;
-    bottom: 20px;
-    width: 130px;
-    height: 146px;
-    z-index: 2;
-    transform: translateY(165px);
-    transition: transform 0.12s cubic-bezier(0.18, 0.89, 0.32, 1.25);
+    bottom: 12px;
+    width: 126px;
+    height: 140px;
+    z-index: 2; /* hole-back(1) 위, hole-front(4) 뒤 */
+    transform: translateY(145px); /* 완전히 구멍 아래에 숨김 */
+    transition: transform 0.14s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     pointer-events: auto;
     cursor: none;
   }
 
+  /* 구멍 밖으로 알맞게 솟구친 상태 */
   .mole-wrapper.up {
     transform: translateY(-8px);
   }
 
+  /* 타격당해 납작해지며 쏙 들어감 */
   .mole-wrapper.hit {
-    transform: translateY(30px) scale(0.95, 0.55) !important;
+    transform: translateY(45px) scale(0.92, 0.5) !important;
     transition: transform 0.08s ease-in;
     pointer-events: none;
   }
@@ -252,13 +276,13 @@
     filter: drop-shadow(0 8px 8px rgba(0,0,0,0.5));
   }
 
-  /* 타격 성공 시 두더지 머리 위에만 나타나는 스매시 해머 */
+  /* 타격 성공 시 두더지 머리 바로 위 망치 스매시 */
   .hammer-smash {
     position: absolute;
-    top: -42px;
+    top: 0px;
     left: 20px;
-    width: 92px;
-    height: 92px;
+    width: 90px;
+    height: 90px;
     pointer-events: none;
     z-index: 99;
     transform-origin: 32px 32px;
@@ -436,7 +460,6 @@
   .rank-table tr:nth-child(even) { background: #fbe9e7; }
   .rank-table tr.top1 td { color: #d84315; }
 
-  /* 닉네임 입력 */
   .name-input {
     width: 80%;
     padding: 8px 12px;
@@ -469,7 +492,11 @@
       <button class="ctrl-btn" id="ctrl-restart">다시하기 🔄</button>
       <button class="ctrl-btn" id="ctrl-exit">메인으로 🏠</button>
     </div>
-    <button class="ctrl-btn" id="audio-toggle" title="배경음악 켜기/끄기">🔊</button>
+    <!-- 볼륨 조절 슬라이더 및 음소거 토글 -->
+    <div id="sound-ctrl-wrap">
+      <button id="audio-toggle" title="음소거 토글">🔊</button>
+      <input type="range" id="vol-slider" min="0" max="100" value="80" title="배경음 및 효과음 볼륨">
+    </div>
   </div>
 
   <!-- 우드 아케이드 전광판 HUD -->
@@ -564,7 +591,6 @@
 
 <script>
 (() => {
-  // 우클릭 완전 방지
   window.addEventListener('contextmenu', (e) => e.preventDefault());
 
   const state = {
@@ -579,6 +605,7 @@
     currentMaxSurvival: 2.0,
     survivalTimer: 2.0,
     soundEnabled: true,
+    masterVolume: 0.8, // 기본 볼륨 80%
     holes: Array(9).fill(null).map(() => ({ active: false, moleType: null, timer: null }))
   };
 
@@ -587,21 +614,41 @@
   let spawnTimeout = null;
   let countdownTimer = null;
 
-  // Web Audio 및 BGM
+  // Web Audio BGM 및 SFX 엔진
   let audioCtx = null;
+  let masterGain = null;
   let bgmInterval = null;
   let bgmStep = 0;
 
+  // 풍성한 아케이드 멜로디 & 베이스 진행
   const MELODY = [
-    261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 261.63, 0,
-    293.66, 349.23, 440.00, 587.33, 440.00, 349.23, 293.66, 0,
-    329.63, 392.00, 493.88, 659.25, 493.88, 392.00, 329.63, 0,
-    392.00, 329.63, 293.66, 261.63, 293.66, 329.63, 261.63, 0
+    261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 261.63, 329.63,
+    293.66, 349.23, 440.00, 587.33, 440.00, 349.23, 293.66, 349.23,
+    329.63, 392.00, 493.88, 659.25, 493.88, 392.00, 329.63, 392.00,
+    392.00, 349.23, 329.63, 293.66, 329.63, 349.23, 392.00, 0
+  ];
+  const BASS = [
+    130.81, 130.81, 196.00, 196.00, 146.83, 146.83, 220.00, 220.00,
+    164.81, 164.81, 246.94, 246.94, 196.00, 174.61, 164.81, 146.83
   ];
 
   function initAudio() {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.setValueAtTime(state.masterVolume, audioCtx.currentTime);
+      masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function updateVolume(val) {
+    state.masterVolume = Math.max(0, Math.min(1, val));
+    if (masterGain && audioCtx) {
+      masterGain.gain.setValueAtTime(state.soundEnabled ? state.masterVolume : 0, audioCtx.currentTime);
+    }
   }
 
   function startBgm() {
@@ -609,7 +656,8 @@
     if (!state.soundEnabled) return;
     initAudio();
     bgmStep = 0;
-    bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 120 : 155);
+    // BGM 연주 템포 (서든데스 시 고속 주행)
+    bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 120 : 150);
   }
 
   function stopBgm() {
@@ -619,69 +667,98 @@
     }
   }
 
+  // 강화된 BGM 출력 (리드 신스 + 베이스 레이어)
   function playBgmStep() {
-    if (!state.isPlaying || !state.soundEnabled || !audioCtx) return;
+    if (!state.isPlaying || !state.soundEnabled || !audioCtx || !masterGain) return;
     const now = audioCtx.currentTime;
+
+    // 1. 리드 신스 (볼륨을 대폭 상향: 0.16)
     const note = MELODY[bgmStep % MELODY.length];
     if (note > 0) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'square';
       osc.frequency.setValueAtTime(note, now);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      // 부드러운 톤 필터
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1600, now);
+
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.13);
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
       osc.start(now);
-      osc.stop(now + 0.12);
+      osc.stop(now + 0.14);
     }
+
+    // 2. 워킹 베이스 라인 (볼륨 보강: 0.22)
+    const bassNote = BASS[bgmStep % BASS.length];
+    if (bassNote > 0) {
+      const bOsc = audioCtx.createOscillator();
+      const bGain = audioCtx.createGain();
+      bOsc.type = 'triangle';
+      bOsc.frequency.setValueAtTime(bassNote, now);
+      bGain.gain.setValueAtTime(0.22, now);
+      bGain.gain.exponentialRampToValueAtTime(0.01, now + 0.17);
+      bOsc.connect(bGain);
+      bGain.connect(masterGain);
+      bOsc.start(now);
+      bOsc.stop(now + 0.18);
+    }
+
     bgmStep++;
   }
 
+  // [수정] 지나치게 크지 않도록 게인을 50~60%로 낮춘 타격음
   function playSfx(type) {
-    if (!state.soundEnabled || !audioCtx) return;
+    if (!state.soundEnabled || !audioCtx || !masterGain) return;
     try {
       const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(masterGain);
 
       if (type === 'hit') {
-        osc.frequency.setValueAtTime(460, now);
-        osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
-        gain.gain.setValueAtTime(0.8, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        // 기존 0.8 -> 0.35로 부드럽고 찰진 소리로 하향
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(110, now + 0.11);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.11);
         osc.start(now);
-        osc.stop(now + 0.13);
+        osc.stop(now + 0.12);
       } else if (type === 'gold') {
+        // 기존 0.7 -> 0.3으로 하향
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(587, now);
-        osc.frequency.setValueAtTime(987, now + 0.09);
-        gain.gain.setValueAtTime(0.7, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.28);
+        osc.frequency.setValueAtTime(880, now + 0.08);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.22);
         osc.start(now);
-        osc.stop(now + 0.28);
+        osc.stop(now + 0.23);
       } else if (type === 'bomb') {
+        // 기존 1.0 -> 0.45로 하향
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(35, now + 0.38);
-        gain.gain.setValueAtTime(1.0, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.38);
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.32);
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.32);
         osc.start(now);
-        osc.stop(now + 0.39);
+        osc.stop(now + 0.33);
       } else if (type === 'beep') {
         osc.frequency.setValueAtTime(440, now);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
         osc.start(now);
-        osc.stop(now + 0.16);
+        osc.stop(now + 0.15);
       } else if (type === 'beep_go') {
         osc.frequency.setValueAtTime(880, now);
-        gain.gain.setValueAtTime(0.5, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
         osc.start(now);
-        osc.stop(now + 0.31);
+        osc.stop(now + 0.26);
       }
     } catch(e) {}
   }
@@ -779,15 +856,30 @@
   const nameModal = document.getElementById('name-modal');
   const viewport = document.getElementById('game-viewport');
   const audioToggleBtn = document.getElementById('audio-toggle');
+  const volSlider = document.getElementById('vol-slider');
   const countdownOverlay = document.getElementById('countdown-overlay');
   const countdownNum = document.getElementById('countdown-num');
 
-  // 오디오 토글
+  // 볼륨 슬라이더 및 음소거 토글
+  volSlider.addEventListener('input', (e) => {
+    initAudio();
+    const val = parseFloat(e.target.value) / 100;
+    state.soundEnabled = val > 0;
+    audioToggleBtn.textContent = state.soundEnabled ? '🔊' : '🔇';
+    updateVolume(val);
+  });
+
   audioToggleBtn.addEventListener('click', () => {
+    initAudio();
     state.soundEnabled = !state.soundEnabled;
     audioToggleBtn.textContent = state.soundEnabled ? '🔊' : '🔇';
-    if (!state.soundEnabled) stopBgm();
-    else if (state.isPlaying) startBgm();
+    if (!state.soundEnabled) {
+      if (masterGain && audioCtx) masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    } else {
+      const val = parseFloat(volSlider.value) / 100 || 0.8;
+      updateVolume(val);
+      if (state.isPlaying && !bgmInterval) startBgm();
+    }
   });
 
   // 랭킹 스토리지 관리 (TOP 7)
@@ -827,7 +919,7 @@
   }
   renderRankTable('start-rank-body');
 
-  // 9개 구멍 생성
+  // [수정] 9개 구멍 생성 (각 구역 슬롯 내부에서만 두더지가 솟구치도록 레이어 분리)
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
     slot.className = 'hole-slot';
@@ -841,7 +933,6 @@
     gridEl.appendChild(slot);
   }
 
-  // 0.6초 오클릭 방지 쿨다운 적용
   function applyButtonCooldown(modalEl) {
     const btns = modalEl.querySelectorAll('button');
     btns.forEach(b => b.classList.add('disabled-cooldown'));
@@ -850,18 +941,16 @@
     }, 600);
   }
 
-  // 3초 카운트다운 후 게임 개시 (시작 및 재시작 공통)
+  // 3초 카운트다운 후 게임 개시
   function requestGameStart() {
     if (state.isCountingDown) return;
     initAudio();
 
-    // 열려있는 모달 정리
     startModal.style.display = 'none';
     gameoverModal.style.display = 'none';
     nameModal.style.display = 'none';
     viewport.classList.remove('sudden-flash');
 
-    // 이전 상태 정리
     clearInterval(gameTickInterval);
     clearTimeout(spawnTimeout);
     clearTimeout(countdownTimer);
@@ -899,10 +988,9 @@
     countdownTimer = setTimeout(doCount, 900);
   }
 
-  // 실질적 본게임 런칭
   function launchGame() {
     state.score = 0;
-    state.timeLeft = 30; // 30초 본게임
+    state.timeLeft = 30;
     state.combo = 0;
     state.maxCombo = 0;
     state.isPlaying = true;
@@ -960,7 +1048,6 @@
     applyButtonCooldown(startModal);
   }
 
-  // 0.1초 메인 루프
   function gameTick() {
     if (!state.isPlaying) return;
 
@@ -970,7 +1057,6 @@
       if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
-      // 2.0초에서 시작하여 0.4초까지 점진적 단축
       state.currentMaxSurvival = Math.max(0.4, 2.0 - (state.suddenDuration * 0.045));
       state.survivalTimer -= 0.1;
 
@@ -1006,7 +1092,6 @@
     return state.holes.filter(h => h.active).length;
   }
 
-  // 동시 출현 최대 4개 제한 가드
   function scheduleSpawn() {
     if (!state.isPlaying) return;
 
@@ -1044,6 +1129,7 @@
 
     const el = document.getElementById(`mole-${slotIdx}`);
     el.innerHTML = MOLE_SVGS[type];
+    // 슬롯 구멍 속에서 위로 솟구치도록 up 클래스 추가
     el.className = 'mole-wrapper up';
 
     const stayTime = getStayDuration();
@@ -1061,12 +1147,12 @@
 
     const el = document.getElementById(`mole-${idx}`);
     if (el) {
+      // 슬롯 구멍 아래로 쏙 들어가 숨겨짐
       el.className = 'mole-wrapper';
       el.innerHTML = '';
     }
   }
 
-  // 콤보 배율 계산 (소수점 첫째 자리 올림)
   function getComboMultiplier(combo) {
     if (combo <= 10) return 1.1;
     if (combo <= 30) return 1.3;
@@ -1074,10 +1160,9 @@
     return 1.5;
   }
 
-  // 타격 판정 및 두더지 머리 위 망치 표시
   function onMoleHit(idx, e) {
     if (!state.isPlaying) return;
-    if (e.button !== undefined && e.button !== 0) return; // 우클릭 무시
+    if (e.button !== undefined && e.button !== 0) return;
 
     const hole = state.holes[idx];
     if (!hole.active) return;
@@ -1099,7 +1184,6 @@
     if (type === 'bomb') {
       playSfx('bomb');
       showPopText(hitX, hitY, 'BOOM! -200', '#d50000');
-      // 폭탄 타격 시 -200점 감점 & 콤보 초기화
       state.score = Math.max(0, state.score - 200);
       state.combo = 0;
       valCombo.textContent = '0';
@@ -1115,7 +1199,6 @@
       state.combo++;
       if (state.combo > state.maxCombo) state.maxCombo = state.combo;
 
-      // 콤보 배율 적용 (소수점 첫째 자리 올림 Math.ceil)
       const multiplier = getComboMultiplier(state.combo);
       const totalPts = Math.ceil(basePts * multiplier);
       state.score += totalPts;
@@ -1152,7 +1235,6 @@
     setTimeout(() => pop.remove(), 500);
   }
 
-  // 게임 오버 처리
   function endGame(reason) {
     state.isPlaying = false;
     clearInterval(gameTickInterval);
