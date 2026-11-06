@@ -49,7 +49,7 @@
   /* 상단 내비게이션 컨트롤 바 */
   #top-ctrl-bar {
     width: 100%;
-    max-width: 580px;
+    max-width: 900px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -109,14 +109,14 @@
   /* 목재 아케이드 전광판 HUD */
   #hud-board {
     width: 100%;
-    max-width: 580px;
+    max-width: 900px;
     background: linear-gradient(180deg, #6d4c41 0%, #4e342e 70%, #3e2723 100%);
     border: 4px solid #ffca28;
     border-radius: 18px;
     box-shadow: 0 8px 18px rgba(0,0,0,0.6), inset 0 3px 5px rgba(255,255,255,0.3);
     padding: 8px 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     color: #fff;
     z-index: 20;
@@ -126,6 +126,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
   }
 
   .stat-label {
@@ -144,10 +145,28 @@
     line-height: 1.1;
   }
 
+  /* 0.5초 콤보 게이지 바 */
+  #combo-gauge-wrap {
+    width: 60px;
+    height: 6px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid #ffd54f;
+    border-radius: 4px;
+    margin-top: 2px;
+    overflow: hidden;
+  }
+
+  #combo-gauge-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #00e676, #ffeb3b);
+    transition: width 0.05s linear;
+  }
+
   /* 서든데스 게이지 바 */
   #survival-container {
     width: 100%;
-    max-width: 580px;
+    max-width: 900px;
     height: 22px;
     background: rgba(0,0,0,0.8);
     border: 2.5px solid #ff3d00;
@@ -183,17 +202,28 @@
     text-shadow: 1px 1px 2px #000;
   }
 
-  /* 3x3 잔디 필드 그리드 */
+  /* 중앙 메인 스테이지 영역 */
+  #main-stage-wrap {
+    flex: 1;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 4px 0;
+    z-index: 10;
+  }
+
+  /* 3x3 잔디 필드 그리드 컨테이너 */
   #field-container {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    max-width: 620px;
+    max-width: 580px;
     max-height: 580px;
-    padding: 4px;
-    z-index: 10;
+    height: 100%;
   }
 
   #field-grid {
@@ -205,12 +235,73 @@
     height: 100%;
   }
 
+  /* 우측 상시 점수판 보드 */
+  #side-rank-board {
+    width: 220px;
+    background: linear-gradient(180deg, rgba(109, 76, 65, 0.94) 0%, rgba(62, 39, 35, 0.96) 100%);
+    border: 3.5px solid var(--gold);
+    border-radius: 18px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.25);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  #side-rank-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffd54f;
+    text-align: center;
+    text-shadow: 1px 1px 3px #000;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid rgba(255, 213, 79, 0.4);
+    letter-spacing: 0.5px;
+  }
+
+  .side-rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .side-rank-table th {
+    background: rgba(0, 0, 0, 0.35);
+    color: #ffecb3;
+    padding: 4px 2px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .side-rank-table td {
+    padding: 4px 2px;
+    font-weight: 900;
+    text-shadow: 1px 1px 2px #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .side-rank-table tr.top1 td {
+    color: #ff5252;
+    font-size: 13px;
+  }
+
+  .side-rank-table tr.top2 td {
+    color: #ffab40;
+  }
+
+  .side-rank-table tr.top3 td {
+    color: #ffd740;
+  }
+
   /* 각 구역 슬롯 */
   .hole-slot {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 120px;
+    min-height: 115px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -218,24 +309,24 @@
     border-radius: 16px;
   }
 
-  /* 구멍 깊이감 (어두운 내부) */
+  /* 구멍 내부 */
   .hole-back {
     position: absolute;
     bottom: 6px;
     width: 92%;
-    height: 54px;
+    height: 52px;
     background: radial-gradient(ellipse at 50% 50%, #110502 0%, #2b1408 65%, #46220e 100%);
     border-radius: 50%;
     box-shadow: inset 0 12px 18px rgba(0,0,0,0.98);
     z-index: 1;
   }
 
-  /* 앞쪽 흙 둔덕 & 풀잎 테두리 */
+  /* 앞쪽 흙 둔덕 */
   .hole-front {
     position: absolute;
     bottom: -6px;
     width: 106%;
-    height: 48px;
+    height: 46px;
     background: radial-gradient(ellipse at 50% 85%, #5d4037 0%, #3e2723 65%, transparent 85%);
     border-bottom: 7px solid #2e7d32;
     border-radius: 50%;
@@ -248,8 +339,8 @@
   .mole-wrapper {
     position: absolute;
     bottom: 12px;
-    width: 126px;
-    height: 140px;
+    width: 122px;
+    height: 136px;
     z-index: 2;
     transform: translateY(145px);
     transition: transform 0.14s cubic-bezier(0.18, 0.89, 0.32, 1.28);
@@ -274,7 +365,7 @@
     filter: drop-shadow(0 8px 8px rgba(0,0,0,0.5));
   }
 
-  /* 타격 성공 시 두더지 머리 바로 위 망치 스매시 */
+  /* 타격 성공 시 망치 스매시 */
   .hammer-smash {
     position: absolute;
     top: 0px;
@@ -425,39 +516,6 @@
     opacity: 0.65;
   }
 
-  /* 랭킹 테이블 */
-  .rank-table-wrap {
-    max-height: 155px;
-    overflow-y: auto;
-    margin: 8px 0 12px 0;
-    border-radius: 10px;
-    border: 2px solid #bcaaa4;
-    background: #efebe9;
-  }
-
-  .rank-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  .rank-table th {
-    background: #6d4c41;
-    color: #fff;
-    padding: 5px;
-    font-size: 11px;
-  }
-
-  .rank-table td {
-    padding: 5px 6px;
-    border-bottom: 1px solid #d7ccc8;
-    color: #3e2723;
-    font-weight: bold;
-  }
-
-  .rank-table tr:nth-child(even) { background: #fbe9e7; }
-  .rank-table tr.top1 td { color: #d84315; }
-
   .name-input {
     width: 80%;
     padding: 8px 12px;
@@ -478,6 +536,28 @@
   @keyframes suddenRed {
     0% { box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.3); }
     100% { box-shadow: inset 0 0 70px rgba(255, 0, 0, 0.85); }
+  }
+
+  @media (max-width: 840px) {
+    #side-rank-board {
+      width: 170px;
+      padding: 6px 8px;
+    }
+    .side-rank-table {
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 700px) {
+    #main-stage-wrap {
+      flex-direction: column;
+      gap: 10px;
+    }
+    #side-rank-board {
+      width: 100%;
+      max-width: 580px;
+      order: 2;
+    }
   }
 </style>
 </head>
@@ -510,6 +590,9 @@
     <div class="stat-badge">
       <div class="stat-label">COMBO</div>
       <div class="stat-val" id="val-combo">0</div>
+      <div id="combo-gauge-wrap" title="0.5초 콤보 게이지">
+        <div id="combo-gauge-fill"></div>
+      </div>
     </div>
   </div>
 
@@ -519,9 +602,26 @@
     <div id="survival-text">COMBO SURVIVAL (MAX 2.0s)</div>
   </div>
 
-  <!-- 3x3 잔디밭 필드 -->
-  <div id="field-container">
-    <div id="field-grid"></div>
+  <!-- 중앙 메인 스테이지 (두더지 필드 + 우측 상시 랭킹) -->
+  <div id="main-stage-wrap">
+    <div id="field-container">
+      <div id="field-grid"></div>
+    </div>
+
+    <!-- 우측 상시 노출 1~7등 점수판 -->
+    <div id="side-rank-board">
+      <div id="side-rank-title">🏆 TOP 7 RANKING</div>
+      <table class="side-rank-table">
+        <thead>
+          <tr>
+            <th>순위</th>
+            <th>이름</th>
+            <th>점수</th>
+          </tr>
+        </thead>
+        <tbody id="side-rank-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -536,16 +636,11 @@
     <h1>두더지 매니아 DX</h1>
     <p>
       💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
-      💣 <strong>폭탄</strong>: <strong>-200점 감점</strong> & 콤보 초기화!<br>
-      🔥 <strong>콤보 보너스</strong>: 1~10콤보(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
+      ⏱️ <strong>콤보 유지 시간 0.5초</strong>: 0.5초 안에 연속 타격 필요!<br>
+      💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
+      🔥 <strong>콤보 보너스</strong>: 1~10(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
       ⚡ <strong>30초 후 서든데스</strong>: 최소 1마리 보장 & 콤보 타이머(2.0s $\rightarrow$ 0.4s)
     </p>
-    <div class="rank-table-wrap">
-      <table class="rank-table">
-        <thead><tr><th>순위</th><th>이름</th><th>점수</th></tr></thead>
-        <tbody id="start-rank-body"></tbody>
-      </table>
-    </div>
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
     </div>
@@ -573,13 +668,6 @@
     <div style="font-size: 26px; font-weight:900; color:#d84315;" id="over-score">0점</div>
     <div style="font-size: 13px; color:#5d4037; margin-bottom: 8px;" id="over-maxcombo">최대 콤보: 0연속</div>
     
-    <div class="rank-table-wrap">
-      <table class="rank-table">
-        <thead><tr><th>순위</th><th>이름</th><th>점수</th></tr></thead>
-        <tbody id="gameover-rank-body"></tbody>
-      </table>
-    </div>
-
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-restart">다시 하기 🔄</button>
       <button class="play-btn sec" id="btn-home">메인 화면 🏠</button>
@@ -596,6 +684,7 @@
     timeLeft: 30,
     combo: 0,
     maxCombo: 0,
+    comboTimer: 0, // 0.5초 콤보 유지 타이머
     isPlaying: false,
     isCountingDown: false,
     isSuddenDeath: false,
@@ -833,6 +922,7 @@
   const valScore = document.getElementById('val-score');
   const valTimer = document.getElementById('val-timer');
   const valCombo = document.getElementById('val-combo');
+  const comboGaugeFill = document.getElementById('combo-gauge-fill');
   const labelTimer = document.getElementById('label-timer');
   const survivalContainer = document.getElementById('survival-container');
   const survivalBar = document.getElementById('survival-bar');
@@ -890,18 +980,25 @@
     return top7;
   }
 
-  function renderRankTable(tbodyId) {
+  function renderSideRankTable() {
     const list = getRankings();
-    const tbody = document.getElementById(tbodyId);
-    tbody.innerHTML = list.map((item, idx) => `
-      <tr class="${idx === 0 ? 'top1' : ''}">
-        <td>${idx + 1}위</td>
-        <td>${item.name}</td>
-        <td>${item.score}점</td>
-      </tr>
-    `).join('');
+    const tbody = document.getElementById('side-rank-body');
+    if (!tbody) return;
+    tbody.innerHTML = list.map((item, idx) => {
+      let rowCls = '';
+      if (idx === 0) rowCls = 'top1';
+      else if (idx === 1) rowCls = 'top2';
+      else if (idx === 2) rowCls = 'top3';
+      return `
+        <tr class="${rowCls}">
+          <td>${idx + 1}위</td>
+          <td>${item.name}</td>
+          <td>${item.score}점</td>
+        </tr>
+      `;
+    }).join('');
   }
-  renderRankTable('start-rank-body');
+  renderSideRankTable();
 
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
@@ -975,6 +1072,7 @@
     state.timeLeft = 30;
     state.combo = 0;
     state.maxCombo = 0;
+    state.comboTimer = 0;
     state.isPlaying = true;
     state.isSuddenDeath = false;
     state.suddenDuration = 0;
@@ -986,6 +1084,7 @@
     valScore.textContent = '0';
     valTimer.textContent = '30';
     valCombo.textContent = '0';
+    comboGaugeFill.style.width = '0%';
     labelTimer.textContent = 'TIME';
     survivalContainer.style.display = 'none';
 
@@ -1024,13 +1123,29 @@
 
     for (let i = 0; i < 9; i++) clearHole(i);
 
-    renderRankTable('start-rank-body');
+    renderSideRankTable();
     startModal.style.display = 'flex';
     applyButtonCooldown(startModal);
   }
 
   function gameTick() {
     if (!state.isPlaying) return;
+
+    // [규칙 1] 0.5초 콤보 유지 타이머 감축 로직
+    if (state.combo > 0) {
+      state.comboTimer -= 0.1;
+      if (state.comboTimer <= 0) {
+        state.combo = 0;
+        state.comboTimer = 0;
+        valCombo.textContent = '0';
+        comboGaugeFill.style.width = '0%';
+      } else {
+        const pct = Math.max(0, (state.comboTimer / 0.5) * 100);
+        comboGaugeFill.style.width = pct + '%';
+      }
+    } else {
+      comboGaugeFill.style.width = '0%';
+    }
 
     if (!state.isSuddenDeath) {
       state.timeLeft -= 0.1;
@@ -1062,7 +1177,6 @@
     showPopText(window.innerWidth / 2, window.innerHeight / 2, '⚡ SUDDEN DEATH! ⚡', '#ff1744');
     startBgm();
 
-    // 서든데스 돌입 즉시 최소 1마리 보장
     if (getActiveCount() === 0) {
       spawnMole();
     }
@@ -1078,7 +1192,6 @@
     return state.holes.filter(h => h.active).length;
   }
 
-  // [수정] 1. 서든데스 최소 1마리 보장 & 2. 후반부 최소 2마리 ~ 최대 4마리 조정
   function scheduleSpawn() {
     if (!state.isPlaying) return;
 
@@ -1086,7 +1199,6 @@
     const isLateGame = state.timeLeft <= 15 || state.isSuddenDeath;
 
     if (isLateGame) {
-      // 후반부: 최소 2마리 ~ 최대 4마리 유지
       if (activeCount < 2) {
         const needToSpawn = 2 - activeCount;
         for (let i = 0; i < needToSpawn; i++) {
@@ -1096,7 +1208,6 @@
         spawnMole();
       }
     } else {
-      // 전반부(15초 이전): 통상 1~3마리 스폰 (최대 4마리 가드)
       if (activeCount < MAX_CONCURRENT_MOLES) {
         spawnMole();
       }
@@ -1153,7 +1264,6 @@
       el.innerHTML = '';
     }
 
-    // [수정] 서든데스 상태에서 두더지가 들어가 화면에 0마리가 되면 즉시 1마리 스폰 보장
     if (state.isPlaying && state.isSuddenDeath && getActiveCount() === 0) {
       spawnMole();
     }
@@ -1188,20 +1298,34 @@
 
     if (type === 'bomb') {
       playSfx('bomb');
-      showPopText(hitX, hitY, 'BOOM! -200', '#d50000');
+      // [규칙 2] 폭탄 타격 시 -200점 감점 및 콤보 초기화
       state.score = Math.max(0, state.score - 200);
       state.combo = 0;
+      state.comboTimer = 0;
       valCombo.textContent = '0';
+      comboGaugeFill.style.width = '0%';
       valScore.textContent = state.score;
       clearHole(idx);
 
-      if (state.isSuddenDeath) endGame('폭탄 타격! 서든데스 탈락');
+      if (state.isSuddenDeath) {
+        // [규칙 2] 서든데스 폭탄 터치 시 즉시 탈락하지 않고 제한시간 0.2초 감소 후 게임 유지
+        state.survivalTimer -= 0.2;
+        showPopText(hitX, hitY, 'BOOM! -200 & -0.2s', '#d50000');
+        if (state.survivalTimer <= 0) {
+          endGame('폭탄 패널티로 제한시간 소진!');
+          return;
+        }
+      } else {
+        showPopText(hitX, hitY, 'BOOM! -200', '#d50000');
+      }
     } else {
       let basePts = 10;
       if (type === 'helmet') basePts = 20;
       if (type === 'gold') basePts = 40;
 
+      // [규칙 1] 콤보 증가 및 콤보 유지 시간 0.5초로 갱신
       state.combo++;
+      state.comboTimer = 0.5;
       if (state.combo > state.maxCombo) state.maxCombo = state.combo;
 
       const multiplier = getComboMultiplier(state.combo);
@@ -1210,6 +1334,7 @@
 
       valScore.textContent = state.score;
       valCombo.textContent = state.combo;
+      comboGaugeFill.style.width = '100%';
 
       if (type === 'gold') {
         playSfx('gold');
@@ -1277,11 +1402,12 @@
     list.push({ name: name.toUpperCase(), score: state.score });
     saveRankings(list);
     nameModal.style.display = 'none';
+    renderSideRankTable();
     showGameOverModal();
   }
 
   function showGameOverModal() {
-    renderRankTable('gameover-rank-body');
+    renderSideRankTable();
     gameoverModal.style.display = 'flex';
     applyButtonCooldown(gameoverModal);
   }
