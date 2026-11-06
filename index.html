@@ -145,7 +145,7 @@
     line-height: 1.1;
   }
 
-  /* 0.5초 콤보 게이지 바 */
+  /* 1.0초 콤보 게이지 바 */
   #combo-gauge-wrap {
     width: 60px;
     height: 6px;
@@ -590,7 +590,7 @@
     <div class="stat-badge">
       <div class="stat-label">COMBO</div>
       <div class="stat-val" id="val-combo">0</div>
-      <div id="combo-gauge-wrap" title="0.5초 콤보 게이지">
+      <div id="combo-gauge-wrap" title="1.5초 콤보 게이지">
         <div id="combo-gauge-fill"></div>
       </div>
     </div>
@@ -636,7 +636,7 @@
     <h1>두더지 매니아 DX</h1>
     <p>
       💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
-      ⏱️ <strong>콤보 유지 시간 0.5초</strong>: 0.5초 안에 연속 타격 필요!<br>
+      ⏱️ <strong>콤보 유지 시간 1.0초</strong>: 1초 안에 연속 타격 시 콤보 유지!<br>
       💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
       🔥 <strong>콤보 보너스</strong>: 1~10(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
       ⚡ <strong>30초 후 서든데스</strong>: 최소 1마리 보장 & 콤보 타이머(2.0s $\rightarrow$ 0.4s)
@@ -684,7 +684,7 @@
     timeLeft: 30,
     combo: 0,
     maxCombo: 0,
-    comboTimer: 0, // 0.5초 콤보 유지 타이머
+    comboTimer: 0, // 1.0초 콤보 유지 타이머
     isPlaying: false,
     isCountingDown: false,
     isSuddenDeath: false,
@@ -1131,7 +1131,7 @@
   function gameTick() {
     if (!state.isPlaying) return;
 
-    // [규칙 1] 0.5초 콤보 유지 타이머 감축 로직
+    // 1.0초 콤보 유지 타이머 감축 로직
     if (state.combo > 0) {
       state.comboTimer -= 0.1;
       if (state.comboTimer <= 0) {
@@ -1140,7 +1140,7 @@
         valCombo.textContent = '0';
         comboGaugeFill.style.width = '0%';
       } else {
-        const pct = Math.max(0, (state.comboTimer / 0.5) * 100);
+        const pct = Math.max(0, (state.comboTimer / 1.0) * 100);
         comboGaugeFill.style.width = pct + '%';
       }
     } else {
@@ -1298,7 +1298,6 @@
 
     if (type === 'bomb') {
       playSfx('bomb');
-      // [규칙 2] 폭탄 타격 시 -200점 감점 및 콤보 초기화
       state.score = Math.max(0, state.score - 200);
       state.combo = 0;
       state.comboTimer = 0;
@@ -1308,7 +1307,6 @@
       clearHole(idx);
 
       if (state.isSuddenDeath) {
-        // [규칙 2] 서든데스 폭탄 터치 시 즉시 탈락하지 않고 제한시간 0.2초 감소 후 게임 유지
         state.survivalTimer -= 0.2;
         showPopText(hitX, hitY, 'BOOM! -200 & -0.2s', '#d50000');
         if (state.survivalTimer <= 0) {
@@ -1323,9 +1321,9 @@
       if (type === 'helmet') basePts = 20;
       if (type === 'gold') basePts = 40;
 
-      // [규칙 1] 콤보 증가 및 콤보 유지 시간 0.5초로 갱신
+      // 콤보 증가 및 콤보 유지 시간 1.0초로 갱신
       state.combo++;
-      state.comboTimer = 0.5;
+      state.comboTimer = 1.0;
       if (state.combo > state.maxCombo) state.maxCombo = state.combo;
 
       const multiplier = getComboMultiplier(state.combo);
