@@ -2,13 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1ㅁ.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Whack-a-Mole Mania Deluxe</title>
 <style>
   :root {
-    --wood-border: #3e2723;
-    --wood-light: #8d6e63;
-    --wood-dark: #4e342e;
     --gold: #ffca28;
   }
 
@@ -25,12 +22,12 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: 'Arial Black', -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-    background: #4caf50;
+    font-family: 'Arial Black', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #1b5e20;
     cursor: default;
   }
 
-  /* 밝고 화사한 햇살 농장 / 채소밭 고화질 사진 배경 */
+  /* 고화질 밝은 농장/채소밭 실사 배경 */
   #game-viewport {
     position: relative;
     width: 100vw;
@@ -39,72 +36,66 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 14px 14px;
-    background: 
-      radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(20, 60, 20, 0.4) 100%),
-      url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-    cursor: none;
-    overflow: hidden;
+    padding: 10px 14px;
+    background-color: #388e3c;
+    background-image: 
+      linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2)),
+      url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover;
+    background-position: center bottom;
+    transition: box-shadow 0.3s ease;
   }
 
-  /* 상단 제어 바 (다시하기, 종료, 사운드) */
-  #top-action-bar {
+  /* 상단 내비게이션 컨트롤 바 */
+  #top-ctrl-bar {
     width: 100%;
-    max-width: 600px;
+    max-width: 580px;
     display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-bottom: 4px;
-    z-index: 50;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    z-index: 30;
   }
 
-  .nav-btn {
-    background: linear-gradient(180deg, #6d4c41 0%, #3e2723 100%);
-    border: 2px solid #ffca28;
+  .ctrl-btn {
+    background: linear-gradient(180deg, #ffb300 0%, #f57f17 100%);
+    border: 2.5px solid #fff;
+    border-radius: 18px;
     color: #fff;
     font-size: 13px;
     font-weight: 900;
     padding: 6px 14px;
-    border-radius: 18px;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-    display: flex;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    text-shadow: 1px 1px 2px #000;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: transform 0.08s ease;
   }
 
-  .nav-btn:active {
-    transform: scale(0.94);
+  .ctrl-btn:active {
+    transform: translateY(2px);
   }
 
-  /* 커스텀 해머 커서 */
-  #custom-hammer {
-    position: fixed;
-    width: 90px;
-    height: 90px;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-34px, -34px) rotate(0deg);
-    transform-origin: 34px 34px;
-    transition: transform 0.04s ease-out;
-    filter: drop-shadow(4px 10px 8px rgba(0,0,0,0.6));
-    display: none;
+  #audio-toggle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
   }
 
-  #custom-hammer.swing {
-    transform: translate(-34px, -34px) rotate(-48deg) scale(0.92);
-    transition: transform 0.03s cubic-bezier(0.1, 0.9, 0.2, 1);
-  }
-
-  /* 아케이드 HUD 전광판 */
+  /* 목재 아케이드 전광판 HUD */
   #hud-board {
     width: 100%;
-    max-width: 600px;
-    background: linear-gradient(180deg, #5d4037 0%, #3e2723 100%);
+    max-width: 580px;
+    background: linear-gradient(180deg, #6d4c41 0%, #4e342e 70%, #3e2723 100%);
     border: 4px solid #ffca28;
-    border-radius: 20px;
-    box-shadow: 0 10px 22px rgba(0,0,0,0.7), inset 0 2px 5px rgba(255,255,255,0.3);
+    border-radius: 18px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.6), inset 0 3px 5px rgba(255,255,255,0.3);
     padding: 8px 20px;
     display: flex;
     justify-content: space-between;
@@ -122,7 +113,7 @@
   .stat-label {
     font-size: 11px;
     font-weight: 900;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     color: #ffd54f;
     text-shadow: 1px 1px 2px #000;
   }
@@ -131,23 +122,23 @@
     font-size: 26px;
     font-weight: 900;
     color: #fff;
-    text-shadow: 2px 3px 0px #000;
+    text-shadow: 2px 2px 0px #000;
     line-height: 1.1;
   }
 
   /* 서든데스 게이지 바 */
   #survival-container {
     width: 100%;
-    max-width: 600px;
-    height: 24px;
+    max-width: 580px;
+    height: 22px;
     background: rgba(0,0,0,0.8);
-    border: 3px solid #ff3d00;
-    border-radius: 14px;
-    margin-top: 6px;
+    border: 2.5px solid #ff3d00;
+    border-radius: 12px;
+    margin-top: 5px;
     position: relative;
     overflow: hidden;
     display: none;
-    box-shadow: 0 0 16px rgba(255, 61, 0, 0.9);
+    box-shadow: 0 0 14px rgba(255, 61, 0, 0.9);
     z-index: 20;
   }
 
@@ -171,11 +162,10 @@
     font-size: 11px;
     font-weight: 900;
     color: #fff;
-    text-shadow: 1px 1px 3px #000;
-    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px #000;
   }
 
-  /* 3x3 잔디밭 필드 */
+  /* 3x3 잔디 필드 그리드 */
   #field-container {
     flex: 1;
     display: flex;
@@ -183,8 +173,9 @@
     justify-content: center;
     width: 100%;
     max-width: 620px;
-    max-height: 600px;
-    padding: 6px;
+    max-height: 580px;
+    padding: 4px;
+    z-index: 10;
   }
 
   #field-grid {
@@ -200,57 +191,55 @@
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 125px;
+    min-height: 120px;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    overflow: visible;
   }
 
-  /* 3D 깊이감 흙구멍 & 마운드 */
   .hole-back {
     position: absolute;
     bottom: 4px;
-    width: 96%;
-    height: 64px;
-    background: radial-gradient(ellipse at 50% 65%, #0e0502 0%, #220f06 65%, #3d1c0a 100%);
+    width: 95%;
+    height: 56px;
+    background: radial-gradient(ellipse at 50% 60%, #150904 0%, #2e170b 60%, #4e2912 100%);
     border-radius: 50%;
-    box-shadow: inset 0 12px 18px rgba(0,0,0,0.98);
+    box-shadow: inset 0 10px 16px rgba(0,0,0,0.95);
     z-index: 1;
   }
 
   .hole-front {
     position: absolute;
-    bottom: -8px;
+    bottom: -6px;
     width: 108%;
-    height: 56px;
-    background: radial-gradient(ellipse at 50% 88%, #5d4037 0%, #3e2723 60%, transparent 85%);
-    border-bottom: 6px solid #2e7d32;
+    height: 50px;
+    background: radial-gradient(ellipse at 50% 85%, #5d4037 0%, #3e2723 65%, transparent 85%);
+    border-bottom: 7px solid #2e7d32;
     border-radius: 50%;
     z-index: 4;
     pointer-events: none;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
   }
 
-  /* 크기 대폭 확대된 (150px) 두더지 래퍼 */
+  /* 두더지 래퍼 */
   .mole-wrapper {
     position: absolute;
-    bottom: 24px;
-    width: 150px;
-    height: 165px;
+    bottom: 20px;
+    width: 130px;
+    height: 146px;
     z-index: 2;
-    transform: translateY(180px);
+    transform: translateY(165px);
     transition: transform 0.12s cubic-bezier(0.18, 0.89, 0.32, 1.25);
     pointer-events: auto;
     cursor: pointer;
   }
 
   .mole-wrapper.up {
-    transform: translateY(-16px);
+    transform: translateY(-8px);
   }
 
   .mole-wrapper.hit {
-    transform: translateY(35px) scale(0.95, 0.5) !important;
+    transform: translateY(30px) scale(0.95, 0.55) !important;
     transition: transform 0.08s ease-in;
     pointer-events: none;
   }
@@ -259,118 +248,146 @@
     width: 100%;
     height: 100%;
     overflow: visible;
-    filter: drop-shadow(0 10px 12px rgba(0,0,0,0.6));
+    filter: drop-shadow(0 8px 8px rgba(0,0,0,0.5));
   }
 
-  /* 조준 링 및 만화 텍스트 */
-  .hit-crosshair {
-    position: fixed;
-    width: 52px;
-    height: 52px;
-    border: 3.5px solid #ff1744;
-    border-radius: 50%;
+  /* 타격 시 두더지 머리 위에만 나타나는 스매시 해머 */
+  .hammer-smash {
+    position: absolute;
+    top: -45px;
+    left: 20px;
+    width: 95px;
+    height: 95px;
     pointer-events: none;
-    transform: translate(-50%, -50%) scale(1.4);
-    animation: reticlePop 0.22s ease-out forwards;
-    z-index: 999;
+    z-index: 99;
+    transform-origin: 30px 30px;
+    animation: hammerSmashAnim 0.22s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    filter: drop-shadow(3px 8px 6px rgba(0,0,0,0.6));
   }
 
-  @keyframes reticlePop {
-    0% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+  @keyframes hammerSmashAnim {
+    0% { transform: rotate(40deg) translateY(-20px) scale(1.15); opacity: 0; }
+    25% { opacity: 1; }
+    55% { transform: rotate(-38deg) translateY(0px) scale(1); opacity: 1; }
+    100% { transform: rotate(-45deg) translateY(10px) scale(0.9); opacity: 0; }
   }
 
+  /* 만화 팝업 텍스트 */
   .comic-pop {
     position: absolute;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 900;
     color: #ffeb3b;
-    -webkit-text-stroke: 2px #d32f2f;
-    text-shadow: 3px 3px 0px #000;
+    -webkit-text-stroke: 1.8px #d32f2f;
+    text-shadow: 2px 2px 0px #000;
     pointer-events: none;
     z-index: 999;
-    animation: popFade 0.55s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    animation: popFade 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
   }
 
   @keyframes popFade {
-    0% { transform: translate(-50%, 0) scale(0.6) rotate(-15deg); opacity: 0; }
-    50% { transform: translate(-50%, -45px) scale(1.25) rotate(5deg); opacity: 1; }
-    100% { transform: translate(-50%, -75px) scale(1) rotate(0deg); opacity: 0; }
+    0% { transform: translate(-50%, 0) scale(0.6) rotate(-12deg); opacity: 0; }
+    50% { transform: translate(-50%, -40px) scale(1.2) rotate(4deg); opacity: 1; }
+    100% { transform: translate(-50%, -65px) scale(1) rotate(0deg); opacity: 0; }
   }
 
-  /* 모달 오버레이 공통 */
+  /* 3초 카운트다운 오버레이 */
+  #countdown-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(2px);
+  }
+
+  #countdown-num {
+    font-size: 110px;
+    font-weight: 900;
+    color: #ffd600;
+    -webkit-text-stroke: 4px #e65100;
+    text-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    animation: countScale 0.85s cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+
+  @keyframes countScale {
+    0% { transform: scale(0.2); opacity: 0; }
+    50% { transform: scale(1.25); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* 모달 오버레이 */
   .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.82);
+    background: rgba(0, 0, 0, 0.72);
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* 두더지 필드 위를 침범하지 않고 하단 전용 구역에 배치 */
+    justify-content: flex-end;
     align-items: center;
     padding-bottom: 24px;
     z-index: 10000;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(4px);
   }
 
   .card-modal {
-    background: linear-gradient(180deg, #fffde7 0%, #fff 100%);
-    border: 6px solid #4e342e;
-    border-radius: 28px;
+    background: linear-gradient(180deg, #fffde7 0%, #ffffff 100%);
+    border: 5px solid #4e342e;
+    border-radius: 24px;
     padding: 20px 24px;
     text-align: center;
-    max-width: 480px;
+    max-width: 440px;
     width: 92%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.85);
-    max-height: 85vh;
-    overflow-y: auto;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.85);
   }
 
-  /* 0.6초 쿨다운 적용: 모달 표시 직후 연타로 인한 오클릭 방지 */
+  .card-modal h1 {
+    font-size: 26px;
+    margin: 0 0 8px 0;
+    color: #e65100;
+    text-shadow: 1px 1px 0 #ffe082;
+  }
+
+  .card-modal p {
+    font-size: 13px;
+    color: #4e342e;
+    line-height: 1.5;
+    margin: 0 0 14px 0;
+    font-weight: bold;
+  }
+
   .modal-btn-group {
     display: flex;
     justify-content: center;
     gap: 12px;
     margin-top: 14px;
-    flex-wrap: wrap;
-    transition: opacity 0.2s ease;
-  }
-
-  .btn-cooldown {
-    pointer-events: none !important;
-    opacity: 0.55 !important;
-    filter: grayscale(40%);
-    cursor: not-allowed !important;
-  }
-
-  .card-modal h1 {
-    font-size: 30px;
-    margin: 0 0 10px 0;
-    color: #e65100;
-    text-shadow: 2px 2px 0 #ffe082;
-  }
-
-  .card-modal p {
-    font-size: 14px;
-    color: #4e342e;
-    line-height: 1.5;
-    margin: 0 0 16px 0;
-    font-weight: bold;
   }
 
   .play-btn {
     background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
-    border: 4px solid #bf360c;
-    border-radius: 32px;
+    border: 3px solid #bf360c;
+    border-radius: 26px;
     color: #fff;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 900;
     padding: 10px 24px;
     cursor: pointer;
-    box-shadow: 0 5px 0 #bf360c, 0 8px 14px rgba(0,0,0,0.35);
+    box-shadow: 0 5px 0 #bf360c, 0 8px 12px rgba(0,0,0,0.3);
     transition: all 0.08s ease;
+  }
+
+  .play-btn.sec {
+    background: linear-gradient(180deg, #78909c 0%, #455a64 100%);
+    border-color: #263238;
+    box-shadow: 0 5px 0 #263238;
   }
 
   .play-btn:active {
@@ -378,61 +395,56 @@
     box-shadow: 0 2px 0 #bf360c;
   }
 
-  .secondary-btn {
-    background: linear-gradient(180deg, #8d6e63 0%, #5d4037 100%);
-    border: 4px solid #3e2723;
-    border-radius: 32px;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 900;
-    padding: 10px 24px;
-    cursor: pointer;
-    box-shadow: 0 5px 0 #3e2723, 0 8px 14px rgba(0,0,0,0.35);
-    transition: all 0.08s ease;
+  .disabled-cooldown {
+    pointer-events: none !important;
+    opacity: 0.65;
   }
 
-  .secondary-btn:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #3e2723;
+  /* 랭킹 테이블 */
+  .rank-table-wrap {
+    max-height: 155px;
+    overflow-y: auto;
+    margin: 8px 0 12px 0;
+    border-radius: 10px;
+    border: 2px solid #bcaaa4;
+    background: #efebe9;
   }
 
-  /* 1~7등 랭킹 보드 테이블 */
-  .ranking-table {
+  .rank-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 14px 0 18px;
-    font-size: 14px;
+    font-size: 12px;
   }
 
-  .ranking-table th {
-    background: #5d4037;
-    color: #ffca28;
-    padding: 6px 8px;
-    border-radius: 4px;
+  .rank-table th {
+    background: #6d4c41;
+    color: #fff;
+    padding: 5px;
+    font-size: 11px;
   }
 
-  .ranking-table td {
-    padding: 5px 8px;
-    color: #3e2723;
-    font-weight: 900;
+  .rank-table td {
+    padding: 5px 6px;
     border-bottom: 1px solid #d7ccc8;
+    color: #3e2723;
+    font-weight: bold;
   }
 
-  .rank-1 { color: #d50000 !important; background: #fff8e1; }
-  .rank-2 { color: #e65100 !important; }
-  .rank-3 { color: #f57f17 !important; }
+  .rank-table tr:nth-child(even) { background: #fbe9e7; }
+  .rank-table tr.top1 td { color: #d84315; }
 
-  /* 닉네임 입력 폼 */
-  .input-name {
+  /* 닉네임 입력 인풋 */
+  .name-input {
     width: 80%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     font-size: 18px;
     font-weight: 900;
     text-align: center;
     border: 3px solid #ff9800;
-    border-radius: 14px;
-    margin-bottom: 16px;
+    border-radius: 12px;
     outline: none;
+    margin-bottom: 10px;
+    background: #fff;
   }
 
   .sudden-flash {
@@ -440,22 +452,24 @@
   }
 
   @keyframes suddenRed {
-    0% { box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.4); }
-    100% { box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.95); }
+    0% { box-shadow: inset 0 0 15px rgba(255, 0, 0, 0.3); }
+    100% { box-shadow: inset 0 0 70px rgba(255, 0, 0, 0.85); }
   }
 </style>
 </head>
 <body>
 
 <div id="game-viewport">
-  <!-- 상단 컨트롤 버튼 (다시하기, 종료, 사운드) -->
-  <div id="top-action-bar">
-    <button class="nav-btn" id="btn-top-restart">다시하기 🔄</button>
-    <button class="nav-btn" id="btn-top-quit">종료 🛑</button>
-    <button class="nav-btn" id="audio-toggle">🔊</button>
+  <!-- 상단 컨트롤 버튼 바 -->
+  <div id="top-ctrl-bar">
+    <div style="display:flex; gap:8px;">
+      <button class="ctrl-btn" id="ctrl-restart">다시하기 🔄</button>
+      <button class="ctrl-btn" id="ctrl-exit">메인으로 🏠</button>
+    </div>
+    <button class="ctrl-btn" id="audio-toggle" title="배경음악 켜기/끄기">🔊</button>
   </div>
 
-  <!-- 메인 HUD 전광판 -->
+  <!-- 우드 아케이드 전광판 HUD -->
   <div id="hud-board">
     <div class="stat-badge">
       <div class="stat-label">SCORE</div>
@@ -471,7 +485,7 @@
     </div>
   </div>
 
-  <!-- 서든데스 게이지 바 -->
+  <!-- 동적 서든데스 게이지 (2.0s -> 0.4s) -->
   <div id="survival-container">
     <div id="survival-bar"></div>
     <div id="survival-text">COMBO SURVIVAL (MAX 2.0s)</div>
@@ -479,92 +493,83 @@
 
   <!-- 3x3 잔디밭 필드 -->
   <div id="field-container">
-    <div id="field-grid">
-      <!-- 9개 슬롯 생성 -->
-    </div>
+    <div id="field-grid"></div>
   </div>
 </div>
 
-<!-- 커스텀 해머 커서 -->
-<div id="custom-hammer">
-  <svg viewBox="0 0 100 100" width="100%" height="100%">
-    <rect x="28" y="28" width="14" height="66" rx="6" fill="#8d6e63" stroke="#3e2723" stroke-width="3.5" transform="rotate(45 35 61)"/>
-    <rect x="14" y="14" width="40" height="40" rx="9" fill="#546e7a" stroke="#263238" stroke-width="4.5" transform="rotate(-45 34 34)"/>
-    <rect x="18" y="18" width="32" height="12" rx="4" fill="#90a4ae" transform="rotate(-45 34 34)"/>
-    <circle cx="34" cy="34" r="4" fill="#ff1744"/>
-  </svg>
+<!-- 3초 카운트다운 오버레이 -->
+<div id="countdown-overlay">
+  <div id="countdown-num">3</div>
 </div>
 
-<!-- 시작 모달 -->
+<!-- 시작 화면 모달 -->
 <div id="start-modal" class="modal-overlay">
   <div class="card-modal">
     <h1>두더지 매니아 DX</h1>
     <p>
-      ⏱️ <strong>제한 시간 30초!</strong><br>
-      💥 모든 두더지는 <strong>1방에 처치!</strong><br>
-      💣 <strong>폭탄</strong>을 치면 콤보 리셋 및 즉시 감점!<br>
-      ⚡ <strong>30초 후 서든데스</strong>: 콤보 타이머가 <strong>2.0s ➔ 0.4s</strong>로 단축됩니다!
+      💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
+      💣 <strong>폭탄</strong>은 감점 및 서든데스 즉시 탈락!<br>
+      ⚡ <strong>30초 후 서든데스</strong>: 콤보 타이머(2.0s $\rightarrow$ 0.4s)
     </p>
-    <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
-  </div>
-</div>
-
-<!-- 이름 입력 모달 (TOP 7 진입 시) -->
-<div id="record-modal" class="modal-overlay" style="display:none;">
-  <div class="card-modal">
-    <h1 style="color:#d84315;">🎉 랭킹 진입! 🎉</h1>
-    <p>TOP 7 명예의 전당에 올랐습니다!<br>이름(닉네임)을 입력하세요.</p>
-    <div style="font-size: 26px; font-weight:900; color:#e65100; margin-bottom: 12px;" id="record-score">0점</div>
-    <input type="text" id="player-name-input" class="input-name" maxlength="8" placeholder="이름 (최대 8글자)">
+    <div class="rank-table-wrap">
+      <table class="rank-table">
+        <thead><tr><th>순위</th><th>이름</th><th>점수</th></tr></thead>
+        <tbody id="start-rank-body"></tbody>
+      </table>
+    </div>
     <div class="modal-btn-group">
-      <button class="play-btn" id="btn-save-record">기록 등록 🏆</button>
-      <button class="secondary-btn" id="btn-skip-to-main">메인으로 🏠</button>
+      <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
     </div>
   </div>
 </div>
 
-<!-- 게임오버 & 랭킹 모달 -->
+<!-- TOP 7 닉네임 입력 모달 -->
+<div id="name-modal" class="modal-overlay" style="display:none;">
+  <div class="card-modal">
+    <h1>🎉 명예의 전당 등극!</h1>
+    <p><span id="new-rank-pos" style="color:#d84315; font-size:16px;">1위</span> 기록을 달성했습니다!</p>
+    <input type="text" id="player-name-input" class="name-input" maxlength="7" placeholder="이름 (최대 7자)" autofocus>
+    <div class="modal-btn-group">
+      <button class="play-btn" id="btn-save-name">등록하기 ✅</button>
+      <button class="play-btn sec" id="btn-skip-name">건너뛰기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 게임 오버 모달 -->
 <div id="gameover-modal" class="modal-overlay" style="display:none;">
   <div class="card-modal">
     <h1 id="over-title">GAME OVER</h1>
+    <p id="over-desc">최종 순위를 확인하세요!</p>
     <div style="font-size: 26px; font-weight:900; color:#d84315;" id="over-score">0점</div>
-    <div style="font-size: 14px; color:#5d4037; margin-bottom: 10px; font-weight:bold;" id="over-maxcombo">최고 콤보: 0연속</div>
-
-    <!-- 1~7등 랭킹 테이블 -->
-    <div style="font-weight: 900; color:#5d4037; font-size:15px; margin-top:8px;">🏆 명예의 전당 (TOP 7) 🏆</div>
-    <table class="ranking-table">
-      <thead>
-        <tr>
-          <th>순위</th>
-          <th>이름</th>
-          <th>점수</th>
-          <th>콤보</th>
-        </tr>
-      </thead>
-      <tbody id="ranking-body">
-        <!-- 순위 자동 채움 -->
-      </tbody>
-    </table>
+    <div style="font-size: 13px; color:#5d4037; margin-bottom: 8px;" id="over-maxcombo">최대 콤보: 0연속</div>
+    
+    <div class="rank-table-wrap">
+      <table class="rank-table">
+        <thead><tr><th>순위</th><th>이름</th><th>점수</th></tr></thead>
+        <tbody id="gameover-rank-body"></tbody>
+      </table>
+    </div>
 
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-restart">다시 하기 🔄</button>
-      <button class="secondary-btn" id="btn-go-main">메인으로 🏠</button>
+      <button class="play-btn sec" id="btn-home">메인 화면 🏠</button>
     </div>
   </div>
 </div>
 
 <script>
 (() => {
-  const GAME_DURATION = 30; // 30초 설정
-  const MAX_CONCURRENT_MOLES = 4; // 최대 표시 갯수 4개 엄격 제한
-  const STORAGE_KEY = 'whack_mole_top7_scores';
+  // 우클릭 완전 방지
+  window.addEventListener('contextmenu', (e) => e.preventDefault());
 
   const state = {
     score: 0,
-    timeLeft: GAME_DURATION,
+    timeLeft: 30,
     combo: 0,
     maxCombo: 0,
     isPlaying: false,
+    isCountingDown: false,
     isSuddenDeath: false,
     suddenDuration: 0,
     currentMaxSurvival: 2.0,
@@ -573,60 +578,12 @@
     holes: Array(9).fill(null).map(() => ({ active: false, moleType: null, timer: null }))
   };
 
+  const MAX_CONCURRENT_MOLES = 4;
   let gameTickInterval = null;
   let spawnTimeout = null;
+  let countdownTimer = null;
 
-  // --- 1~7등 랭킹 기본값 & 로드 시스템 ---
-  function getLeaderboard() {
-    const defaultData = [
-      { name: '두더지헌터', score: 480, combo: 24 },
-      { name: '망치마스터', score: 420, combo: 20 },
-      { name: '황금황제', score: 360, combo: 18 },
-      { name: '스피드왕', score: 310, combo: 15 },
-      { name: '빛의손가락', score: 260, combo: 12 },
-      { name: '아케이드장인', score: 210, combo: 10 },
-      { name: '풍선껌', score: 160, combo: 8 }
-    ];
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
-    } catch(e) {}
-    return defaultData;
-  }
-
-  function saveLeaderboard(board) {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(board));
-    } catch(e) {}
-  }
-
-  function checkIsTop7(score) {
-    const list = getLeaderboard();
-    if (list.length < 7) return true;
-    return score > list[list.length - 1].score;
-  }
-
-  function renderLeaderboardTable() {
-    const list = getLeaderboard();
-    const tbody = document.getElementById('ranking-body');
-    tbody.innerHTML = '';
-    list.slice(0, 7).forEach((item, idx) => {
-      const tr = document.createElement('tr');
-      if (idx === 0) tr.className = 'rank-1';
-      else if (idx === 1) tr.className = 'rank-2';
-      else if (idx === 2) tr.className = 'rank-3';
-
-      tr.innerHTML = `
-        <td>${idx + 1}등</td>
-        <td>${item.name}</td>
-        <td>${item.score}점</td>
-        <td>${item.combo}연속</td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  // --- Web Audio 사운드 & 8비트 BGM ---
+  // Web Audio 및 BGM
   let audioCtx = null;
   let bgmInterval = null;
   let bgmStep = 0;
@@ -637,18 +594,10 @@
     329.63, 392.00, 493.88, 659.25, 493.88, 392.00, 329.63, 0,
     392.00, 329.63, 293.66, 261.63, 293.66, 329.63, 261.63, 0
   ];
-  const BASS = [
-    130.81, 0, 130.81, 0, 146.83, 0, 146.83, 0,
-    164.81, 0, 164.81, 0, 130.81, 0, 196.00, 0
-  ];
 
   function initAudio() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
   function startBgm() {
@@ -656,8 +605,7 @@
     if (!state.soundEnabled) return;
     initAudio();
     bgmStep = 0;
-    const tempo = state.isSuddenDeath ? 120 : 155;
-    bgmInterval = setInterval(playBgmStep, tempo);
+    bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 120 : 155);
   }
 
   function stopBgm() {
@@ -670,7 +618,6 @@
   function playBgmStep() {
     if (!state.isPlaying || !state.soundEnabled || !audioCtx) return;
     const now = audioCtx.currentTime;
-
     const note = MELODY[bgmStep % MELODY.length];
     if (note > 0) {
       const osc = audioCtx.createOscillator();
@@ -678,27 +625,12 @@
       osc.type = 'square';
       osc.frequency.setValueAtTime(note, now);
       gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.13);
+      osc.stop(now + 0.12);
     }
-
-    const bassNote = BASS[bgmStep % BASS.length];
-    if (bassNote > 0) {
-      const bassOsc = audioCtx.createOscillator();
-      const bassGain = audioCtx.createGain();
-      bassOsc.type = 'triangle';
-      bassOsc.frequency.setValueAtTime(bassNote, now);
-      bassGain.gain.setValueAtTime(0.07, now);
-      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      bassOsc.connect(bassGain);
-      bassGain.connect(audioCtx.destination);
-      bassOsc.start(now);
-      bassOsc.stop(now + 0.16);
-    }
-
     bgmStep++;
   }
 
@@ -734,11 +666,33 @@
         gain.gain.linearRampToValueAtTime(0.01, now + 0.38);
         osc.start(now);
         osc.stop(now + 0.39);
+      } else if (type === 'beep') {
+        osc.frequency.setValueAtTime(440, now);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.16);
+      } else if (type === 'beep_go') {
+        osc.frequency.setValueAtTime(880, now);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.31);
       }
     } catch(e) {}
   }
 
-  // --- 초대형 (150px) 고화질 벡터 에셋 ---
+  // 타격 시 나타나는 망치 SVG
+  const HAMMER_SVG = `
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <rect x="28" y="28" width="14" height="64" rx="6" fill="#8d6e63" stroke="#3e2723" stroke-width="3.5" transform="rotate(45 35 60)"/>
+      <rect x="14" y="14" width="40" height="40" rx="9" fill="#546e7a" stroke="#263238" stroke-width="4.5" transform="rotate(-45 34 34)"/>
+      <rect x="18" y="18" width="32" height="12" rx="4" fill="#90a4ae" transform="rotate(-45 34 34)"/>
+      <circle cx="34" cy="34" r="4.5" fill="#ff1744"/>
+    </svg>
+  `;
+
+  // 두더지 SVG
   const MOLE_SVGS = {
     normal: `
       <svg viewBox="0 0 120 130">
@@ -772,7 +726,6 @@
         <circle cx="48" cy="62" r="4" fill="#000"/>
         <circle cx="76" cy="62" r="4" fill="#000"/>
         <path d="M16,48 Q60,12 104,48 Q106,54 60,54 Q14,54 16,48 Z" fill="#ffd600" stroke="#f57f17" stroke-width="5"/>
-        <path d="M28,45 Q60,22 92,45" fill="none" stroke="#fff" stroke-width="4" opacity="0.6"/>
         <rect x="50" y="26" width="20" height="18" rx="4" fill="#fff" stroke="#f57f17" stroke-width="3"/>
         <path d="M60,30 L60,40 M54,35 L66,35" stroke="#d50000" stroke-width="4" stroke-linecap="round"/>
         <ellipse cx="30" cy="106" rx="12" ry="8" fill="#d7ccc8" stroke="#2e1b14" stroke-width="3.5"/>
@@ -798,9 +751,9 @@
         <path d="M60,34 Q74,18 88,22" fill="none" stroke="#8d6e63" stroke-width="5" stroke-linecap="round"/>
         <circle cx="90" cy="21" r="9" fill="#ffeb3b"/>
         <polygon points="90,10 96,26 82,16 99,19 86,28" fill="#ff1744"/>
-        <circle cx="60" cy="76" r="44" fill="#212121" stroke="#000" stroke-width="5"/>
+        <circle cx="60" cy="76" r="42" fill="#212121" stroke="#000" stroke-width="5"/>
         <ellipse cx="46" cy="62" rx="10" ry="5" fill="#757575" transform="rotate(-30 46 62)"/>
-        <circle cx="60" cy="76" r="15" fill="#fff"/>
+        <circle cx="60" cy="76" r="14" fill="#fff"/>
         <circle cx="55" cy="74" r="3.5" fill="#212121"/>
         <circle cx="65" cy="74" r="3.5" fill="#212121"/>
         <rect x="56" y="84" width="8" height="6" rx="1" fill="#fff"/>
@@ -808,9 +761,8 @@
     `
   };
 
-  // --- DOM 요소 캐싱 ---
+  // DOM 캐싱
   const gridEl = document.getElementById('field-grid');
-  const hammerEl = document.getElementById('custom-hammer');
   const valScore = document.getElementById('val-score');
   const valTimer = document.getElementById('val-timer');
   const valCombo = document.getElementById('val-combo');
@@ -819,116 +771,134 @@
   const survivalBar = document.getElementById('survival-bar');
   const survivalText = document.getElementById('survival-text');
   const startModal = document.getElementById('start-modal');
-  const recordModal = document.getElementById('record-modal');
   const gameoverModal = document.getElementById('gameover-modal');
+  const nameModal = document.getElementById('name-modal');
   const viewport = document.getElementById('game-viewport');
   const audioToggleBtn = document.getElementById('audio-toggle');
-  const playerNameInput = document.getElementById('player-name-input');
-
-  function returnToMainMenu() {
-    state.isPlaying = false;
-    clearInterval(gameTickInterval);
-    clearTimeout(spawnTimeout);
-    stopBgm();
-    viewport.classList.remove('sudden-flash');
-    for (let i = 0; i < 9; i++) clearHole(i);
-
-    recordModal.style.display = 'none';
-    gameoverModal.style.display = 'none';
-    startModal.style.display = 'flex';
-  }
-
-  // 모달 오픈 시 0.6초 쿨다운을 적용해 연타 중 실수 클릭 방지
-  function applyButtonCooldown(containerSelector) {
-    const group = document.querySelector(containerSelector);
-    if (!group) return;
-    group.classList.add('btn-cooldown');
-    setTimeout(() => {
-      group.classList.remove('btn-cooldown');
-    }, 600);
-  }
+  const countdownOverlay = document.getElementById('countdown-overlay');
+  const countdownNum = document.getElementById('countdown-num');
 
   // 오디오 토글
-  audioToggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
+  audioToggleBtn.addEventListener('click', () => {
     state.soundEnabled = !state.soundEnabled;
     audioToggleBtn.textContent = state.soundEnabled ? '🔊' : '🔇';
     if (!state.soundEnabled) stopBgm();
     else if (state.isPlaying) startBgm();
   });
 
-  // 상단 바 버튼 바인딩
-  document.getElementById('btn-top-restart').addEventListener('click', (e) => {
-    e.stopPropagation();
-    startGame();
-  });
+  // 랭킹 스토리지 관리 (TOP 7)
+  function getRankings() {
+    try {
+      const data = localStorage.getItem('whack_rankings_top7');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+    return [
+      { name: "ACE", score: 650 },
+      { name: "HAMMER", score: 520 },
+      { name: "SPEEDY", score: 410 },
+      { name: "MOLE", score: 320 },
+      { name: "LUCKY", score: 240 },
+      { name: "ROOKIE", score: 180 },
+      { name: "BEGIN", score: 100 }
+    ];
+  }
 
-  document.getElementById('btn-top-quit').addEventListener('click', (e) => {
-    e.stopPropagation();
-    returnToMainMenu();
-  });
+  function saveRankings(list) {
+    list.sort((a, b) => b.score - a.score);
+    const top7 = list.slice(0, 7);
+    localStorage.setItem('whack_rankings_top7', JSON.stringify(top7));
+    return top7;
+  }
 
-  // 필드 홀 9개 초기화
+  function renderRankTable(tbodyId) {
+    const list = getRankings();
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = list.map((item, idx) => `
+      <tr class="${idx === 0 ? 'top1' : ''}">
+        <td>${idx + 1}위</td>
+        <td>${item.name}</td>
+        <td>${item.score}점</td>
+      </tr>
+    `).join('');
+  }
+  renderRankTable('start-rank-body');
+
+  // 9개 구멍 생성
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
     slot.className = 'hole-slot';
-    slot.dataset.index = i;
-
     slot.innerHTML = `
       <div class="hole-back"></div>
       <div class="mole-wrapper" id="mole-${i}"></div>
       <div class="hole-front"></div>
     `;
-
     const moleWrapper = slot.querySelector('.mole-wrapper');
     moleWrapper.addEventListener('pointerdown', (e) => onMoleHit(i, e));
     gridEl.appendChild(slot);
   }
 
-  // 우클릭 메뉴 차단 (게임 화면 전체 및 필드 영역)
-  window.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-  });
+  // 0.6초 오클릭 방지 쿨다운 적용
+  function applyButtonCooldown(modalEl) {
+    const btns = modalEl.querySelectorAll('button');
+    btns.forEach(b => b.classList.add('disabled-cooldown'));
+    setTimeout(() => {
+      btns.forEach(b => b.classList.remove('disabled-cooldown'));
+    }, 600);
+  }
 
-  // 커스텀 커서 추적
-  window.addEventListener('pointermove', (e) => {
-    hammerEl.style.display = 'block';
-    hammerEl.style.left = e.clientX + 'px';
-    hammerEl.style.top = e.clientY + 'px';
-  });
-
-  window.addEventListener('pointerdown', (e) => {
-    // 마우스 우클릭 등 보조 버튼 클릭 무시 (주 버튼 e.button === 0 만 허용)
-    if (e.button !== undefined && e.button !== 0) return;
-
+  // 3초 카운트다운 후 게임 개시
+  function requestGameStart() {
+    if (state.isCountingDown) return;
     initAudio();
-    hammerEl.classList.remove('swing');
-    void hammerEl.offsetWidth;
-    hammerEl.classList.add('swing');
 
-    const reticle = document.createElement('div');
-    reticle.className = 'hit-crosshair';
-    reticle.style.left = e.clientX + 'px';
-    reticle.style.top = e.clientY + 'px';
-    document.body.appendChild(reticle);
-    setTimeout(() => reticle.remove(), 220);
-  });
-
-  // 게임 시작
-  document.getElementById('btn-start').addEventListener('click', startGame);
-  document.getElementById('btn-restart').addEventListener('click', startGame);
-  document.getElementById('btn-go-main').addEventListener('click', returnToMainMenu);
-  document.getElementById('btn-skip-to-main').addEventListener('click', returnToMainMenu);
-
-  function startGame() {
-    initAudio();
+    // 열려있는 모달 정리
     startModal.style.display = 'none';
-    recordModal.style.display = 'none';
     gameoverModal.style.display = 'none';
+    nameModal.style.display = 'none';
     viewport.classList.remove('sudden-flash');
 
+    // 이전 상태 정리
+    clearInterval(gameTickInterval);
+    clearTimeout(spawnTimeout);
+    clearTimeout(countdownTimer);
+    stopBgm();
+
+    state.isPlaying = false;
+    state.isCountingDown = true;
+    for (let i = 0; i < 9; i++) clearHole(i);
+
+    let count = 3;
+    countdownOverlay.style.display = 'flex';
+    countdownNum.textContent = count;
+    playSfx('beep');
+
+    const doCount = () => {
+      count--;
+      if (count > 0) {
+        countdownNum.textContent = count;
+        countdownNum.style.animation = 'none';
+        void countdownNum.offsetWidth;
+        countdownNum.style.animation = 'countScale 0.85s cubic-bezier(0.1, 0.9, 0.2, 1)';
+        playSfx('beep');
+        countdownTimer = setTimeout(doCount, 900);
+      } else {
+        countdownNum.textContent = 'GO!';
+        playSfx('beep_go');
+        countdownTimer = setTimeout(() => {
+          countdownOverlay.style.display = 'none';
+          state.isCountingDown = false;
+          launchGame();
+        }, 500);
+      }
+    };
+
+    countdownTimer = setTimeout(doCount, 900);
+  }
+
+  // 실질적 본게임 런칭
+  function launchGame() {
     state.score = 0;
-    state.timeLeft = GAME_DURATION;
+    state.timeLeft = 30; // 30초 본게임
     state.combo = 0;
     state.maxCombo = 0;
     state.isPlaying = true;
@@ -940,44 +910,71 @@
     for (let i = 0; i < 9; i++) clearHole(i);
 
     valScore.textContent = '0';
-    valTimer.textContent = GAME_DURATION;
+    valTimer.textContent = '30';
     valCombo.textContent = '0';
     labelTimer.textContent = 'TIME';
     survivalContainer.style.display = 'none';
 
-    clearInterval(gameTickInterval);
-    clearTimeout(spawnTimeout);
-
     gameTickInterval = setInterval(gameTick, 100);
-    // 스타트 버튼 누른 후 0.5초(500ms) 뒤부터 두더지 등장
     spawnTimeout = setTimeout(scheduleSpawn, 500);
     startBgm();
   }
 
-  // 0.1초 루프 (30초 카운트다운 & 서든데스)
+  // 버튼 이벤트 연결
+  document.getElementById('btn-start').addEventListener('click', requestGameStart);
+  document.getElementById('btn-restart').addEventListener('click', requestGameStart);
+  document.getElementById('ctrl-restart').addEventListener('click', requestGameStart);
+  document.getElementById('ctrl-exit').addEventListener('click', returnToMainMenu);
+  document.getElementById('btn-home').addEventListener('click', returnToMainMenu);
+  document.getElementById('btn-skip-name').addEventListener('click', () => {
+    nameModal.style.display = 'none';
+    showGameOverModal();
+  });
+  document.getElementById('btn-save-name').addEventListener('click', saveRankAndProceed);
+  document.getElementById('player-name-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveRankAndProceed();
+  });
+
+  function returnToMainMenu() {
+    state.isPlaying = false;
+    state.isCountingDown = false;
+    clearInterval(gameTickInterval);
+    clearTimeout(spawnTimeout);
+    clearTimeout(countdownTimer);
+    stopBgm();
+
+    countdownOverlay.style.display = 'none';
+    gameoverModal.style.display = 'none';
+    nameModal.style.display = 'none';
+    viewport.classList.remove('sudden-flash');
+    survivalContainer.style.display = 'none';
+
+    for (let i = 0; i < 9; i++) clearHole(i);
+
+    renderRankTable('start-rank-body');
+    startModal.style.display = 'flex';
+    applyButtonCooldown(startModal);
+  }
+
+  // 0.1초 메인 루프
   function gameTick() {
     if (!state.isPlaying) return;
 
     if (!state.isSuddenDeath) {
       state.timeLeft -= 0.1;
       valTimer.textContent = Math.max(0, Math.ceil(state.timeLeft));
-
-      if (state.timeLeft <= 0) {
-        enterSuddenDeath();
-      }
+      if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
-      // [서든데스 게이지 감축 로직] 2.0초 시작 -> 최종 0.4초까지 감축 (초당 약 0.05초씩 단축)
-      state.currentMaxSurvival = Math.max(0.4, 2.0 - (state.suddenDuration * 0.05));
+      // 2.0초에서 시작하여 0.4초까지 점진적 단축
+      state.currentMaxSurvival = Math.max(0.4, 2.0 - (state.suddenDuration * 0.045));
       state.survivalTimer -= 0.1;
 
       const pct = Math.max(0, (state.survivalTimer / state.currentMaxSurvival) * 100);
       survivalBar.style.width = pct + '%';
       survivalText.textContent = `COMBO SURVIVAL (${state.survivalTimer.toFixed(1)}s / MAX ${state.currentMaxSurvival.toFixed(1)}s)`;
 
-      if (state.survivalTimer <= 0) {
-        endGame('시간 초과! 서든데스 콤보 실패');
-      }
+      if (state.survivalTimer <= 0) endGame('시간 초과! 서든데스 콤보 실패');
     }
   }
 
@@ -996,10 +993,8 @@
   }
 
   function getStayDuration() {
-    if (state.isSuddenDeath) {
-      return 750 + Math.random() * 200;
-    }
-    const elapsed = GAME_DURATION - state.timeLeft;
+    if (state.isSuddenDeath) return 800 + Math.random() * 200;
+    const elapsed = 30 - state.timeLeft;
     return Math.max(750, 1500 - (elapsed * 25));
   }
 
@@ -1007,17 +1002,17 @@
     return state.holes.filter(h => h.active).length;
   }
 
+  // 동시 출현 최대 4개 제한 가드
   function scheduleSpawn() {
     if (!state.isPlaying) return;
 
-    // 최대 4마리 초과 금지 가드
     if (getActiveCount() < MAX_CONCURRENT_MOLES) {
       spawnMole();
     }
 
     const nextDelay = state.isSuddenDeath 
-      ? 260 + Math.random() * 220
-      : Math.max(280, 700 - ((GAME_DURATION - state.timeLeft) * 14));
+      ? 400 + Math.random() * 250
+      : Math.max(380, 850 - ((30 - state.timeLeft) * 15));
 
     spawnTimeout = setTimeout(scheduleSpawn, nextDelay);
   }
@@ -1048,7 +1043,6 @@
     el.className = 'mole-wrapper up';
 
     const stayTime = getStayDuration();
-
     hole.timer = setTimeout(() => {
       if (hole.active) clearHole(slotIdx);
     }, stayTime);
@@ -1068,20 +1062,27 @@
     }
   }
 
+  // 타격 판정 및 두더지 머리 위 망치 표시
   function onMoleHit(idx, e) {
     if (!state.isPlaying) return;
-    // 마우스 우클릭 등 보조 버튼은 타격으로 인정하지 않음
-    if (e.button !== undefined && e.button !== 0) return;
+    if (e.button !== undefined && e.button !== 0) return; // 우클릭 무시
 
     const hole = state.holes[idx];
     if (!hole.active) return;
-
     e.stopPropagation();
+
     const type = hole.moleType;
     const el = document.getElementById(`mole-${idx}`);
     const rect = el.getBoundingClientRect();
     const hitX = rect.left + rect.width / 2;
     const hitY = rect.top + rect.height / 3;
+
+    // 타격된 두더지 머리 위에만 망치 생성
+    const hammer = document.createElement('div');
+    hammer.className = 'hammer-smash';
+    hammer.innerHTML = HAMMER_SVG;
+    el.parentElement.appendChild(hammer);
+    setTimeout(() => hammer.remove(), 240);
 
     if (type === 'bomb') {
       playSfx('bomb');
@@ -1090,15 +1091,10 @@
       state.combo = 0;
       valCombo.textContent = '0';
       valScore.textContent = state.score;
-
       clearHole(idx);
 
-      if (state.isSuddenDeath) {
-        endGame('폭탄 타격! 서든데스 탈락');
-        return;
-      }
+      if (state.isSuddenDeath) endGame('폭탄 타격! 서든데스 탈락');
     } else {
-      // 1타 처치
       let pts = 10;
       if (type === 'helmet') pts = 20;
       if (type === 'gold') pts = 40;
@@ -1139,10 +1135,10 @@
     pop.style.top = y + 'px';
     pop.style.color = color || '#ffeb3b';
     document.body.appendChild(pop);
-    setTimeout(() => pop.remove(), 550);
+    setTimeout(() => pop.remove(), 500);
   }
 
-  // --- 게임 종료 및 랭킹 처리 ---
+  // 게임 오버 처리
   function endGame(reason) {
     state.isPlaying = false;
     clearInterval(gameTickInterval);
@@ -1150,41 +1146,43 @@
     stopBgm();
     viewport.classList.remove('sudden-flash');
 
-    if (checkIsTop7(state.score)) {
-      // 1~7등 진입 시 이름 입력 모달 표출
-      document.getElementById('record-score').textContent = `${state.score}점 (최대콤보 ${state.maxCombo}연속)`;
-      playerNameInput.value = '';
-      recordModal.style.display = 'flex';
-      applyButtonCooldown('#record-modal .modal-btn-group');
-      setTimeout(() => playerNameInput.focus(), 650);
+    document.getElementById('over-title').textContent = state.isSuddenDeath ? '서든데스 종료!' : 'TIME UP!';
+    document.getElementById('over-desc').textContent = reason || '멋진 플레이였습니다!';
+    document.getElementById('over-score').textContent = `${state.score}점`;
+    document.getElementById('over-maxcombo').textContent = `최고 콤보: ${state.maxCombo}연속`;
+
+    const rankings = getRankings();
+    const isTop7 = rankings.length < 7 || state.score > rankings[rankings.length - 1].score;
+
+    if (isTop7 && state.score > 0) {
+      let rankPos = 1;
+      for (let r of rankings) {
+        if (state.score <= r.score) rankPos++;
+        else break;
+      }
+      document.getElementById('new-rank-pos').textContent = `${rankPos}위`;
+      document.getElementById('player-name-input').value = '';
+      nameModal.style.display = 'flex';
+      applyButtonCooldown(nameModal);
+      setTimeout(() => document.getElementById('player-name-input').focus(), 300);
     } else {
-      showFinalGameOver(reason);
+      showGameOverModal();
     }
   }
 
-  // 이름 저장 버튼 이벤트
-  document.getElementById('btn-save-record').addEventListener('click', () => {
-    let name = playerNameInput.value.trim() || '플레이어';
-    if (name.length > 8) name = name.substring(0, 8);
+  function saveRankAndProceed() {
+    let name = document.getElementById('player-name-input').value.trim() || 'HERO';
+    const list = getRankings();
+    list.push({ name: name.toUpperCase(), score: state.score });
+    saveRankings(list);
+    nameModal.style.display = 'none';
+    showGameOverModal();
+  }
 
-    const list = getLeaderboard();
-    list.push({ name: name, score: state.score, combo: state.maxCombo });
-    // 점수 내림차순 정렬 후 상위 7개만 유지
-    list.sort((a, b) => b.score - a.score);
-    const top7 = list.slice(0, 7);
-    saveLeaderboard(top7);
-
-    recordModal.style.display = 'none';
-    showFinalGameOver('새로운 랭킹 기록이 등록되었습니다!');
-  });
-
-  function showFinalGameOver(reason) {
-    document.getElementById('over-title').textContent = state.isSuddenDeath ? '서든데스 종료!' : 'TIME UP!';
-    document.getElementById('over-score').textContent = `${state.score}점`;
-    document.getElementById('over-maxcombo').textContent = `최고 콤보: ${state.maxCombo}연속`;
-    renderLeaderboardTable();
+  function showGameOverModal() {
+    renderRankTable('gameover-rank-body');
     gameoverModal.style.display = 'flex';
-    applyButtonCooldown('#gameover-modal .modal-btn-group');
+    applyButtonCooldown(gameoverModal);
   }
 })();
 </script>
