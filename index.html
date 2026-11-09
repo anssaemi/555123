@@ -237,28 +237,46 @@
 
   /* 우측 상시 점수판 보드 */
   #side-rank-board {
-    width: 220px;
+    width: 228px;
     background: linear-gradient(180deg, rgba(109, 76, 65, 0.94) 0%, rgba(62, 39, 35, 0.96) 100%);
     border: 3.5px solid var(--gold);
     border-radius: 18px;
     box-shadow: 0 10px 24px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.25);
-    padding: 10px 12px;
+    padding: 10px 10px;
     display: flex;
     flex-direction: column;
     color: #fff;
     flex-shrink: 0;
   }
 
-  #side-rank-title {
-    font-size: 15px;
+  /* 학생 / 선생님 랭킹 탭 헤더 */
+  .rank-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    background: rgba(0,0,0,0.4);
+    padding: 3px;
+    border-radius: 12px;
+  }
+
+  .rank-tab-btn {
+    flex: 1;
+    padding: 5px 0;
+    font-size: 11px;
     font-weight: 900;
     color: #ffd54f;
-    text-align: center;
-    text-shadow: 1px 1px 3px #000;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 2px solid rgba(255, 213, 79, 0.4);
-    letter-spacing: 0.5px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rank-tab-btn.active {
+    background: linear-gradient(180deg, #ffb300, #f57f17);
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
   .side-rank-table {
@@ -497,7 +515,6 @@
     opacity: 0.65;
   }
 
-  /* 학생 선택 및 관리 패널 스타일 */
   .student-panel {
     background: #efebe9;
     border: 2px solid #bcaaa4;
@@ -580,8 +597,9 @@
   }
 
   @media (max-width: 840px) {
-    #side-rank-board { width: 170px; padding: 6px 8px; }
+    #side-rank-board { width: 175px; padding: 6px 6px; }
     .side-rank-table { font-size: 11px; }
+    .rank-tab-btn { font-size: 10px; }
   }
 
   @media (max-width: 700px) {
@@ -636,9 +654,12 @@
       <div id="field-grid"></div>
     </div>
 
-    <!-- 우측 상시 노출 1~7등 점수판 (중복 없는 최고 점수 랭킹) -->
+    <!-- 우측 상시 점수판 (학생/선생님 분리 탭) -->
     <div id="side-rank-board">
-      <div id="side-rank-title">🏆 명예의 전당 (TOP 7)</div>
+      <div class="rank-tabs">
+        <button class="rank-tab-btn active" id="tab-student" data-type="student">🎒 학생 랭킹</button>
+        <button class="rank-tab-btn" id="tab-teacher" data-type="teacher">👩‍🏫 선생님</button>
+      </div>
       <table class="side-rank-table">
         <thead>
           <tr>
@@ -657,20 +678,20 @@
   <div id="countdown-num">3</div>
 </div>
 
-<!-- 시작 화면 모달 (학생 선택 및 추가 기능 탑재) -->
+<!-- 시작 화면 모달 -->
 <div id="start-modal" class="modal-overlay">
   <div class="card-modal">
     <h1>두더지 매니아 DX</h1>
-    <p>도전할 학생을 선택하고 시작하세요!</p>
+    <p>도전할 이름을 선택하고 시작하세요!<br><small style="color: #6d4c41;">(이름에 '선생님'이 들어가면 선생님 랭킹으로 분류됩니다)</small></p>
 
     <div class="student-panel">
       <div class="student-select-row">
-        <label for="student-select">👤 학생 선택:</label>
+        <label for="student-select">👤 도전자 선택:</label>
         <select id="student-select" class="student-dropdown"></select>
-        <button class="small-btn del" id="btn-delete-student" title="선택한 학생 삭제">삭제</button>
+        <button class="small-btn del" id="btn-delete-student" title="선택한 이름 삭제">삭제</button>
       </div>
       <div class="student-add-row">
-        <input type="text" id="new-student-name" class="student-input" maxlength="7" placeholder="새 학생 이름 입력 (최대 7자)">
+        <input type="text" id="new-student-name" class="student-input" maxlength="7" placeholder="새 이름 (예: 민준, 김선생님)">
         <button class="small-btn" id="btn-add-student">추가 ➕</button>
       </div>
     </div>
@@ -692,7 +713,7 @@
     
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-restart">다시 하기 🔄</button>
-      <button class="play-btn sec" id="btn-home">학생 변경 🏠</button>
+      <button class="play-btn sec" id="btn-home">도전자 변경 🏠</button>
     </div>
   </div>
 </div>
@@ -704,6 +725,8 @@
   const COMBO_GRACE_PERIOD = 2.0;
   const SUDDEN_DEATH_START = 2.5;
   const SUDDEN_DEATH_MIN = 0.9;
+
+  let currentRankTab = 'student'; // 'student' 또는 'teacher'
 
   const state = {
     currentPlayer: '',
@@ -989,6 +1012,10 @@
   const btnAddStudent = document.getElementById('btn-add-student');
   const btnDeleteStudent = document.getElementById('btn-delete-student');
 
+  // 랭킹 탭 버튼
+  const tabStudentBtn = document.getElementById('tab-student');
+  const tabTeacherBtn = document.getElementById('tab-teacher');
+
   volSlider.addEventListener('input', (e) => {
     initAudio();
     const val = parseFloat(e.target.value) / 100;
@@ -1011,18 +1038,18 @@
   });
 
   // ==========================================
-  // [기능 1, 2, 3] 학생 명단 및 중복 없는 최고점수 랭킹 시스템
+  // [학생 / 선생님 분리] 명단 및 랭킹 관리
   // ==========================================
   function getStudents() {
     try {
-      const data = localStorage.getItem('whack_students_list');
+      const data = localStorage.getItem('whack_students_list_v2');
       if (data) return JSON.parse(data);
     } catch(e) {}
-    return ["민준", "서연", "도윤", "지우", "하은"];
+    return ["민준", "서연", "도윤", "지우", "하은", "용운선생님"];
   }
 
   function saveStudents(list) {
-    localStorage.setItem('whack_students_list', JSON.stringify(list));
+    localStorage.setItem('whack_students_list_v2', JSON.stringify(list));
   }
 
   function renderStudentSelect(selectedName) {
@@ -1031,7 +1058,7 @@
     if (students.length === 0) {
       const opt = document.createElement('option');
       opt.value = '';
-      opt.textContent = '학생을 추가해주세요';
+      opt.textContent = '이름을 추가해주세요';
       studentSelect.appendChild(opt);
       return;
     }
@@ -1045,14 +1072,14 @@
     });
   }
 
-  // 최고 점수 랭킹 (이름별 최고점수 1건만 유지)
   function getRankings() {
     try {
-      const data = localStorage.getItem('whack_unique_rankings');
+      const data = localStorage.getItem('whack_unique_rankings_v2');
       if (data) return JSON.parse(data);
     } catch(e) {}
     return [
       { name: "민준", score: 450 },
+      { name: "용운선생님", score: 520 },
       { name: "서연", score: 380 },
       { name: "도윤", score: 290 },
       { name: "지우", score: 210 },
@@ -1076,22 +1103,31 @@
     }
 
     list.sort((a, b) => b.score - a.score);
-    localStorage.setItem('whack_unique_rankings', JSON.stringify(list));
+    localStorage.setItem('whack_unique_rankings_v2', JSON.stringify(list));
     renderSideRankTable();
     return { isNewBest, bestScore: existing ? existing.score : newScore };
   }
 
+  // '선생님' 포함 여부로 분리하여 렌더링
   function renderSideRankTable() {
-    const list = getRankings().slice(0, 7);
+    const fullList = getRankings();
+    const isTeacherTab = currentRankTab === 'teacher';
+
+    // 필터링: '선생님' 단어 포함 여부
+    const filtered = fullList.filter(item => {
+      const hasTeacherWord = item.name.includes('선생님');
+      return isTeacherTab ? hasTeacherWord : !hasTeacherWord;
+    }).slice(0, 7);
+
     const tbody = document.getElementById('side-rank-body');
     if (!tbody) return;
 
-    if (list.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" style="padding:10px; color:#bcaaa4;">기록 없음</td></tr>`;
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="padding:14px 4px; color:#bcaaa4; font-size:11px;">등록된 기록이 없습니다.</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = list.map((item, idx) => {
+    tbody.innerHTML = filtered.map((item, idx) => {
       let rowCls = '';
       if (idx === 0) rowCls = 'top1';
       else if (idx === 1) rowCls = 'top2';
@@ -1106,7 +1142,22 @@
     }).join('');
   }
 
-  // 학생 추가 버튼 이벤트
+  // 탭 전환 이벤트
+  tabStudentBtn.addEventListener('click', () => {
+    currentRankTab = 'student';
+    tabStudentBtn.classList.add('active');
+    tabTeacherBtn.classList.remove('active');
+    renderSideRankTable();
+  });
+
+  tabTeacherBtn.addEventListener('click', () => {
+    currentRankTab = 'teacher';
+    tabTeacherBtn.classList.add('active');
+    tabStudentBtn.classList.remove('active');
+    renderSideRankTable();
+  });
+
+  // 이름 추가 이벤트
   btnAddStudent.addEventListener('click', () => {
     const name = newStudentInput.value.trim();
     if (!name) return;
@@ -1117,7 +1168,7 @@
       renderStudentSelect(name);
       newStudentInput.value = '';
     } else {
-      alert('이미 등록된 학생 이름입니다.');
+      alert('이미 등록된 이름입니다.');
       studentSelect.value = name;
       newStudentInput.value = '';
     }
@@ -1127,22 +1178,20 @@
     if (e.key === 'Enter') btnAddStudent.click();
   });
 
-  // 학생 삭제 버튼 이벤트
+  // 이름 삭제 이벤트
   btnDeleteStudent.addEventListener('click', () => {
     const selected = studentSelect.value;
     if (!selected) return;
-    if (confirm(`'${selected}' 학생을 목록에서 삭제하시겠습니까?`)) {
+    if (confirm(`'${selected}'을(를) 목록에서 삭제하시겠습니까?`)) {
       let students = getStudents().filter(s => s !== selected);
       saveStudents(students);
       renderStudentSelect();
     }
   });
 
-  // 초기 렌더링
   renderStudentSelect();
   renderSideRankTable();
 
-  // 구멍 9개 생성
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
     slot.className = 'hole-slot';
@@ -1164,15 +1213,26 @@
     }, 600);
   }
 
-  // 게임 시작 요청 (선택된 학생 이름 검증)
   function requestGameStart() {
     const selectedName = studentSelect.value;
     if (!selectedName) {
-      alert('도전할 학생을 먼저 선택하거나 추가해주세요!');
+      alert('도전할 이름을 먼저 선택하거나 추가해주세요!');
       return;
     }
     state.currentPlayer = selectedName;
     valPlayer.textContent = selectedName;
+
+    // 플레이어 성향에 맞춰 랭킹 탭 자동 전환
+    if (selectedName.includes('선생님')) {
+      currentRankTab = 'teacher';
+      tabTeacherBtn.classList.add('active');
+      tabStudentBtn.classList.remove('active');
+    } else {
+      currentRankTab = 'student';
+      tabStudentBtn.classList.add('active');
+      tabTeacherBtn.classList.remove('active');
+    }
+    renderSideRankTable();
 
     if (state.isCountingDown) return;
     initAudio();
@@ -1615,7 +1675,6 @@
     setTimeout(() => pop.remove(), 500);
   }
 
-  // [기능 3 적용] 게임 종료 시 학생별 최고 기록 자동 갱신 및 표시
   function endGame(reason) {
     state.isPlaying = false;
     clearInterval(gameTickInterval);
@@ -1624,11 +1683,10 @@
     viewport.classList.remove('sudden-flash');
 
     document.getElementById('over-title').textContent = state.isSuddenDeath ? '서든데스 종료!' : 'TIME UP!';
-    document.getElementById('over-desc').textContent = `${state.currentPlayer} 학생의 도전 종료! (${reason || '플레이 완료'})`;
+    document.getElementById('over-desc').textContent = `${state.currentPlayer}님의 도전 종료! (${reason || '플레이 완료'})`;
     document.getElementById('over-score').textContent = `${state.score}점`;
     document.getElementById('over-detail').textContent = `최고 콤보: ${state.maxCombo}연속`;
 
-    // 해당 학생의 최고 점수 갱신 판정
     const result = updatePlayerScore(state.currentPlayer, state.score);
     const notifyEl = document.getElementById('record-notify');
     if (result.isNewBest) {
