@@ -636,11 +636,11 @@
     <h1>두더지 매니아 DX</h1>
     <p>
       💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
-      ⚡ <strong>즉시 연계 스폰(Chain Spawning)</strong>: 타격 성공 시 다음 두더지가 즉시 등장하여 콤보 유지!<br>
-      ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 시 콤보 유지!<br>
+      ⚡ <strong>즉시 연계 스폰(Chain Spawning)</strong>: 타격 성공 시 다음 두더지가 즉시 등장!<br>
+      ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 필요 (두더지 놓치면 <strong>-0.1초</strong> 페널티!)<br>
       💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
       🔥 <strong>콤보 보너스</strong>: 1~10(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
-      ⚡ <strong>30초 후 서든데스</strong>: 두더지 1마리 + 폭탄 1개 고정 출현 & 게이지 <strong>2.5초 $\rightarrow$ 1.0초</strong> 단축!
+      ⚡ <strong>서든데스 규칙</strong>: 두더지 놓치면 제한시간 <strong>-0.1초</strong> & 콤보시간 <strong>-0.1초</strong> 즉시 감소!
     </p>
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
@@ -680,9 +680,9 @@
 (() => {
   window.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  const COMBO_GRACE_PERIOD = 2.0; // 콤보 유지 시간 2초
-  const SUDDEN_DEATH_START = 2.5; // 서든데스 시작 시간 2.5초
-  const SUDDEN_DEATH_MIN = 1.0;   // 서든데스 최종 한계 시간 1.0초
+  const COMBO_GRACE_PERIOD = 2.0;
+  const SUDDEN_DEATH_START = 2.5;
+  const SUDDEN_DEATH_MIN = 1.0;
 
   const state = {
     score: 0,
@@ -712,20 +712,28 @@
   let bgmInterval = null;
   let bgmStep = 0;
 
-  // 신나고 경쾌한 업비트 아케이드 멜로디
+  // 비프음 없는 또렷하고 맑은 8비트 아케이드 멜로디 (Hz)
   const MELODY = [
-    523.25, 0, 523.25, 659.25, 783.99, 0, 659.25, 783.99,
-    880.00, 783.99, 659.25, 523.25, 587.33, 0, 659.25, 0,
-    587.33, 0, 587.33, 698.46, 880.00, 0, 783.99, 698.46,
-    659.25, 783.99, 880.00, 1046.50, 783.99, 0, 659.25, 0
+    523.25, 659.25, 783.99, 1046.50, // C5 - E5 - G5 - C6
+    587.33, 698.46, 880.00, 1174.66, // D5 - F5 - A5 - D6
+    659.25, 783.99, 987.77, 1318.51, // E5 - G5 - B5 - E6
+    783.99, 659.25, 587.33, 523.25,  // G5 - E5 - D5 - C5
+    880.00, 698.46, 659.25, 587.33,  // A5 - F5 - E5 - D5
+    783.99, 659.25, 587.33, 523.25,  // G5 - E5 - D5 - C5
+    698.46, 587.33, 523.25, 493.88,  // F5 - D5 - C5 - B4
+    523.25, 783.99, 523.25, 0        // C5 - G5 - C5 - Rest
   ];
 
-  // 바운스 슬랩 베이스
+  // 리듬을 잡아주는 베이스 멜로디 (Hz)
   const BASS = [
-    130.81, 261.63, 130.81, 261.63, 164.81, 329.63, 164.81, 329.63,
-    174.61, 349.23, 174.61, 349.23, 196.00, 392.00, 196.00, 392.00,
-    146.83, 293.66, 146.83, 293.66, 174.61, 349.23, 174.61, 349.23,
-    196.00, 392.00, 196.00, 392.00, 130.81, 196.00, 261.63, 0
+    261.63, 261.63, 196.00, 196.00,
+    293.66, 293.66, 220.00, 220.00,
+    329.63, 329.63, 246.94, 246.94,
+    196.00, 196.00, 261.63, 261.63,
+    220.00, 220.00, 293.66, 293.66,
+    196.00, 196.00, 261.63, 261.63,
+    174.61, 174.61, 196.00, 196.00,
+    261.63, 196.00, 261.63, 0
   ];
 
   function initAudio() {
@@ -752,7 +760,7 @@
     if (!state.soundEnabled) return;
     initAudio();
     bgmStep = 0;
-    bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 100 : 125);
+    bgmInterval = setInterval(playBgmStep, state.isSuddenDeath ? 105 : 130);
   }
 
   function stopBgm() {
@@ -770,58 +778,34 @@
     if (note > 0) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      osc.type = 'square';
+      osc.type = 'triangle';
       osc.frequency.setValueAtTime(note, now);
 
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(2400, now);
-      filter.frequency.exponentialRampToValueAtTime(700, now + 0.11);
+      gain.gain.setValueAtTime(0.01, now);
+      gain.gain.linearRampToValueAtTime(0.22, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.12);
 
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.11);
-
-      osc.connect(filter);
-      filter.connect(gain);
+      osc.connect(gain);
       gain.connect(masterGain);
       osc.start(now);
-      osc.stop(now + 0.12);
+      osc.stop(now + 0.125);
     }
 
     const bassNote = BASS[bgmStep % BASS.length];
     if (bassNote > 0) {
       const bOsc = audioCtx.createOscillator();
       const bGain = audioCtx.createGain();
-      bOsc.type = 'triangle';
+      bOsc.type = 'sine';
       bOsc.frequency.setValueAtTime(bassNote, now);
-      bGain.gain.setValueAtTime(0.24, now);
-      bGain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+      bGain.gain.setValueAtTime(0.01, now);
+      bGain.gain.linearRampToValueAtTime(0.25, now + 0.02);
+      bGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
       bOsc.connect(bGain);
       bGain.connect(masterGain);
       bOsc.start(now);
-      bOsc.stop(now + 0.11);
-    }
-
-    if (bgmStep % 2 === 1) {
-      const noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < noiseBuffer.length; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
-      const whiteNoise = audioCtx.createBufferSource();
-      whiteNoise.buffer = noiseBuffer;
-      const noiseFilter = audioCtx.createBiquadFilter();
-      noiseFilter.type = 'highpass';
-      noiseFilter.frequency.setValueAtTime(3500, now);
-
-      const noiseGain = audioCtx.createGain();
-      noiseGain.gain.setValueAtTime(0.05, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-
-      whiteNoise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(masterGain);
-      whiteNoise.start(now);
+      bOsc.stop(now + 0.125);
     }
 
     bgmStep++;
@@ -859,6 +843,14 @@
         gain.gain.linearRampToValueAtTime(0.01, now + 0.32);
         osc.start(now);
         osc.stop(now + 0.33);
+      } else if (type === 'miss') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(130, now + 0.14);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.14);
+        osc.start(now);
+        osc.stop(now + 0.15);
       } else if (type === 'beep') {
         osc.frequency.setValueAtTime(440, now);
         gain.gain.setValueAtTime(0.2, now);
@@ -1072,7 +1064,7 @@
 
     state.isPlaying = false;
     state.isCountingDown = true;
-    for (let i = 0; i < 9; i++) clearHole(i, false);
+    for (let i = 0; i < 9; i++) clearHole(i, false, false);
 
     let count = 3;
     countdownOverlay.style.display = 'flex';
@@ -1114,7 +1106,7 @@
     state.currentMaxSurvival = SUDDEN_DEATH_START;
     state.survivalTimer = SUDDEN_DEATH_START;
 
-    for (let i = 0; i < 9; i++) clearHole(i, false);
+    for (let i = 0; i < 9; i++) clearHole(i, false, false);
 
     valScore.textContent = '0';
     valTimer.textContent = '30';
@@ -1159,7 +1151,7 @@
     viewport.classList.remove('sudden-flash');
     survivalContainer.style.display = 'none';
 
-    for (let i = 0; i < 9; i++) clearHole(i, false);
+    for (let i = 0; i < 9; i++) clearHole(i, false, false);
 
     renderSideRankTable();
     startModal.style.display = 'flex';
@@ -1169,7 +1161,6 @@
   function gameTick() {
     if (!state.isPlaying) return;
 
-    // 2.0초 콤보 유지 타이머 감축 로직
     if (state.combo > 0) {
       state.comboTimer -= 0.1;
       if (state.comboTimer <= 0) {
@@ -1185,7 +1176,6 @@
       comboGaugeFill.style.width = '0%';
     }
 
-    // 일반 모드 최소 1마리 보장 & 서든데스 모드 (두더지 최소 1, 폭탄 최소 1) 보장 체크
     if (!state.isSuddenDeath) {
       if (getActiveCount() === 0) spawnMole();
     } else {
@@ -1198,7 +1188,6 @@
       if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
-      // 2.5초에서 시작하여 1.0초까지 단축
       state.currentMaxSurvival = Math.max(SUDDEN_DEATH_MIN, SUDDEN_DEATH_START - (state.suddenDuration * 0.05));
       state.survivalTimer -= 0.1;
 
@@ -1286,7 +1275,8 @@
 
     const stayTime = getStayDuration();
     hole.timer = setTimeout(() => {
-      if (hole.active) clearHole(slotIdx);
+      // 시간 만료로 들어갈 때는 isNaturalMiss = true 로 호출
+      if (hole.active) clearHole(slotIdx, true, true);
     }, stayTime);
   }
 
@@ -1350,13 +1340,17 @@
 
     const stayTime = getStayDuration();
     hole.timer = setTimeout(() => {
-      if (hole.active) clearHole(slotIdx);
+      // 시간 만료로 들어갈 때는 isNaturalMiss = true 로 호출
+      if (hole.active) clearHole(slotIdx, true, true);
     }, stayTime);
   }
 
-  function clearHole(idx, triggerRespawn = true) {
+  // [수정] 두더지를 잡지 못하고 놓쳤을 때의 페널티 처리
+  function clearHole(idx, triggerRespawn = true, isNaturalMiss = false) {
     const hole = state.holes[idx];
     if (hole.timer) clearTimeout(hole.timer);
+
+    const missedType = hole.moleType;
     hole.active = false;
     hole.moleType = null;
     hole.timer = null;
@@ -1365,6 +1359,40 @@
     if (el) {
       el.className = 'mole-wrapper';
       el.innerHTML = '';
+    }
+
+    // 자연 만료로 두더지를 놓쳤을 때 (폭탄 제외)
+    if (isNaturalMiss && state.isPlaying && missedType && missedType !== 'bomb') {
+      playSfx('miss');
+
+      // 1) 콤보 유지 시간 0.1초 감소 페널티 (전체 구간 공통 적용)
+      if (state.combo > 0) {
+        state.comboTimer = Math.max(0, state.comboTimer - 0.1);
+        if (state.comboTimer <= 0) {
+          state.combo = 0;
+          state.comboTimer = 0;
+          valCombo.textContent = '0';
+          comboGaugeFill.style.width = '0%';
+        } else {
+          const pct = Math.max(0, (state.comboTimer / COMBO_GRACE_PERIOD) * 100);
+          comboGaugeFill.style.width = pct + '%';
+        }
+      }
+
+      // 2) 서든데스 모드에서는 제한시간 0.1초 즉시 감소 페널티
+      if (state.isSuddenDeath) {
+        state.survivalTimer -= 0.1;
+
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          showPopText(rect.left + rect.width / 2, rect.top + rect.height / 3, 'MISS! -0.1s', '#ff5252');
+        }
+
+        if (state.survivalTimer <= 0) {
+          endGame('두더지를 놓쳐 서든데스 제한시간 소진!');
+          return;
+        }
+      }
     }
 
     if (triggerRespawn && state.isPlaying) {
@@ -1411,7 +1439,7 @@
       valCombo.textContent = '0';
       comboGaugeFill.style.width = '0%';
       valScore.textContent = state.score;
-      clearHole(idx);
+      clearHole(idx, true, false);
 
       if (state.isSuddenDeath) {
         state.survivalTimer -= 0.2;
@@ -1428,7 +1456,6 @@
       if (type === 'helmet') basePts = 20;
       if (type === 'gold') basePts = 40;
 
-      // 콤보 증가 및 콤보 유지 시간 2.0초로 갱신
       state.combo++;
       state.comboTimer = COMBO_GRACE_PERIOD;
       if (state.combo > state.maxCombo) state.maxCombo = state.combo;
@@ -1455,10 +1482,8 @@
 
       el.classList.add('hit');
       if (hole.timer) clearTimeout(hole.timer);
-      setTimeout(() => clearHole(idx), 100);
+      setTimeout(() => clearHole(idx, true, false), 100);
 
-      // [1번 해결책 적용: 즉시 연계 스폰 (Chain Spawning)]
-      // 타격 성공 시 필드에 남아있는 두더지(폭탄 제외)가 1마리 이하라면 80ms 후 즉시 새 두더지 스폰
       if (getMoleCount() <= 1) {
         setTimeout(() => {
           if (state.isPlaying && getMoleCount() < MAX_CONCURRENT_MOLES) {
