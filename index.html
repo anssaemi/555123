@@ -596,7 +596,7 @@
     </div>
   </div>
 
-  <!-- 동적 서든데스 게이지 (2.5s -> 1.0s) -->
+  <!-- 동적 서든데스 게이지 (2.5s -> 0.9s) -->
   <div id="survival-container">
     <div id="survival-bar"></div>
     <div id="survival-text">COMBO SURVIVAL (MAX 2.5s)</div>
@@ -640,7 +640,7 @@
       ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 필요 (두더지 놓치면 <strong>-0.1초</strong> 페널티!)<br>
       💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
       🔥 <strong>콤보 배율</strong>: 1~10(1.0배), 11~30(1.1배), 31~50(1.4배), 51초과(1.5배)<br>
-      ⚡ <strong>서든데스 규칙</strong>: 두더지 놓치면 제한시간 <strong>-0.1초</strong> & 콤보시간 <strong>-0.1초</strong> 즉시 감소!
+      ⚡ <strong>서든데스 규칙</strong>: 두더지 놓치면 제한시간 <strong>-0.1초</strong> 감소 & 게이지 <strong>2.5초 $\rightarrow$ 0.9초</strong> 단축!
     </p>
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
@@ -682,7 +682,7 @@
 
   const COMBO_GRACE_PERIOD = 2.0;
   const SUDDEN_DEATH_START = 2.5;
-  const SUDDEN_DEATH_MIN = 1.0;
+  const SUDDEN_DEATH_MIN = 0.9; // 서든데스 최종 한계 시간 0.9초로 변경
 
   const state = {
     score: 0,
@@ -1186,6 +1186,7 @@
       if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
+      // 2.5초에서 시작하여 0.9초까지 점진적 감소
       state.currentMaxSurvival = Math.max(SUDDEN_DEATH_MIN, SUDDEN_DEATH_START - (state.suddenDuration * 0.05));
       state.survivalTimer -= 0.1;
 
@@ -1396,7 +1397,6 @@
     }
   }
 
-  // [수정] 요청하신 신규 콤보 배율 (1~10: 1배, 11~30: 1.1배, 31~50: 1.4배, 51 이상: 1.5배)
   function getComboMultiplier(combo) {
     if (combo <= 10) return 1.0;
     if (combo <= 30) return 1.1;
