@@ -249,7 +249,7 @@
     flex-shrink: 0;
   }
 
-  /* 학생 / 선생님 랭킹 탭 헤더 */
+  /* 탭 헤더 */
   .rank-tabs {
     display: flex;
     gap: 4px;
@@ -304,6 +304,43 @@
   .side-rank-table tr.top1 td { color: #ff5252; font-size: 13px; }
   .side-rank-table tr.top2 td { color: #ffab40; }
   .side-rank-table tr.top3 td { color: #ffd740; }
+
+  /* 메인 모달 전용 랭킹 테이블 래퍼 */
+  .modal-rank-wrap {
+    background: #efebe9;
+    border: 2px solid #bcaaa4;
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin: 8px 0;
+    max-height: 140px;
+    overflow-y: auto;
+  }
+
+  .modal-rank-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .modal-rank-table th {
+    background: #6d4c41;
+    color: #ffd54f;
+    padding: 4px 2px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .modal-rank-table td {
+    padding: 4px 2px;
+    font-weight: bold;
+    color: #3e2723;
+    border-bottom: 1px solid #d7ccc8;
+  }
+
+  .modal-rank-table tr.top1 td { color: #d84315; font-weight: 900; font-size: 13px; }
+  .modal-rank-table tr.top2 td { color: #e65100; font-weight: 900; }
+  .modal-rank-table tr.top3 td { color: #f57c00; font-weight: 900; }
 
   /* 각 구역 슬롯 */
   .hole-slot {
@@ -457,25 +494,25 @@
     background: linear-gradient(180deg, #fffde7 0%, #ffffff 100%);
     border: 5px solid #4e342e;
     border-radius: 24px;
-    padding: 18px 22px;
+    padding: 16px 20px;
     text-align: center;
-    max-width: 460px;
-    width: 92%;
+    max-width: 470px;
+    width: 94%;
     box-shadow: 0 16px 36px rgba(0,0,0,0.85);
   }
 
   .card-modal h1 {
-    font-size: 25px;
-    margin: 0 0 6px 0;
+    font-size: 24px;
+    margin: 0 0 4px 0;
     color: #e65100;
     text-shadow: 1px 1px 0 #ffe082;
   }
 
   .card-modal p {
-    font-size: 13px;
+    font-size: 12px;
     color: #4e342e;
     line-height: 1.4;
-    margin: 0 0 10px 0;
+    margin: 0 0 6px 0;
     font-weight: bold;
   }
 
@@ -483,7 +520,7 @@
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 10px;
   }
 
   .play-btn {
@@ -493,7 +530,7 @@
     color: #fff;
     font-size: 15px;
     font-weight: 900;
-    padding: 9px 22px;
+    padding: 8px 22px;
     cursor: pointer;
     box-shadow: 0 4px 0 #bf360c, 0 6px 10px rgba(0,0,0,0.3);
     transition: all 0.08s ease;
@@ -518,9 +555,9 @@
   .student-panel {
     background: #efebe9;
     border: 2px solid #bcaaa4;
-    border-radius: 14px;
-    padding: 10px 12px;
-    margin: 8px 0;
+    border-radius: 12px;
+    padding: 8px 10px;
+    margin: 6px 0;
     text-align: left;
   }
 
@@ -528,7 +565,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .student-select-row label {
@@ -540,8 +577,8 @@
 
   .student-dropdown {
     flex: 1;
-    padding: 6px 10px;
-    font-size: 14px;
+    padding: 5px 8px;
+    font-size: 13px;
     font-weight: 900;
     border: 2px solid #ff9800;
     border-radius: 8px;
@@ -557,8 +594,8 @@
 
   .student-input {
     flex: 1;
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 5px 8px;
+    font-size: 12px;
     font-weight: bold;
     border: 2px solid #bcaaa4;
     border-radius: 8px;
@@ -571,8 +608,8 @@
   }
 
   .small-btn {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 5px 10px;
+    font-size: 11px;
     font-weight: 900;
     border-radius: 8px;
     border: none;
@@ -654,11 +691,11 @@
       <div id="field-grid"></div>
     </div>
 
-    <!-- 우측 상시 점수판 (학생/선생님 분리 탭) -->
+    <!-- 우측 인게임 상시 점수판 -->
     <div id="side-rank-board">
       <div class="rank-tabs">
-        <button class="rank-tab-btn active" id="tab-student" data-type="student">🎒 학생 랭킹</button>
-        <button class="rank-tab-btn" id="tab-teacher" data-type="teacher">👩‍🏫 선생님</button>
+        <button class="rank-tab-btn active side-tab" id="side-tab-student" data-type="student">🎒 학생 랭킹</button>
+        <button class="rank-tab-btn side-tab" id="side-tab-teacher" data-type="teacher">👩‍🏫 선생님</button>
       </div>
       <table class="side-rank-table">
         <thead>
@@ -678,21 +715,42 @@
   <div id="countdown-num">3</div>
 </div>
 
-<!-- 시작 화면 모달 -->
+<!-- 시작(메인) 화면 모달: 도전자 관리 + 메인 랭킹판 동시 노출 -->
 <div id="start-modal" class="modal-overlay">
   <div class="card-modal">
     <h1>두더지 매니아 DX</h1>
-    <p>도전할 이름을 선택하고 시작하세요!<br><small style="color: #6d4c41;">(이름에 '선생님'이 들어가면 선생님 랭킹으로 분류됩니다)</small></p>
+    <p>도전할 이름을 선택하고 게임을 시작하세요!</p>
 
+    <!-- 도전자 선택 및 추가 패널 -->
     <div class="student-panel">
       <div class="student-select-row">
-        <label for="student-select">👤 도전자 선택:</label>
+        <label for="student-select">👤 도전자:</label>
         <select id="student-select" class="student-dropdown"></select>
         <button class="small-btn del" id="btn-delete-student" title="선택한 이름 삭제">삭제</button>
       </div>
       <div class="student-add-row">
         <input type="text" id="new-student-name" class="student-input" maxlength="7" placeholder="새 이름 (예: 민준, 김선생님)">
         <button class="small-btn" id="btn-add-student">추가 ➕</button>
+      </div>
+    </div>
+
+    <!-- 메인 화면 랭킹 뷰어 -->
+    <div style="margin-top: 6px;">
+      <div class="rank-tabs" style="margin-bottom: 4px;">
+        <button class="rank-tab-btn active modal-tab" id="modal-tab-student" data-type="student">🎒 학생 TOP 7</button>
+        <button class="rank-tab-btn modal-tab" id="modal-tab-teacher" data-type="teacher">👩‍🏫 선생님 랭킹</button>
+      </div>
+      <div class="modal-rank-wrap">
+        <table class="modal-rank-table">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>이름</th>
+              <th>최고기록</th>
+            </tr>
+          </thead>
+          <tbody id="modal-rank-body"></tbody>
+        </table>
       </div>
     </div>
 
@@ -726,7 +784,8 @@
   const SUDDEN_DEATH_START = 2.5;
   const SUDDEN_DEATH_MIN = 0.9;
 
-  let currentRankTab = 'student'; // 'student' 또는 'teacher'
+  let currentSideTab = 'student';   // 인게임 우측 랭킹 탭 상태 ('student' | 'teacher')
+  let currentModalTab = 'student';  // 메인 모달 랭킹 탭 상태 ('student' | 'teacher')
 
   const state = {
     currentPlayer: '',
@@ -1006,15 +1065,19 @@
   const countdownOverlay = document.getElementById('countdown-overlay');
   const countdownNum = document.getElementById('countdown-num');
 
-  // 학생 관리 DOM
+  // 도전자 관리 DOM
   const studentSelect = document.getElementById('student-select');
   const newStudentInput = document.getElementById('new-student-name');
   const btnAddStudent = document.getElementById('btn-add-student');
   const btnDeleteStudent = document.getElementById('btn-delete-student');
 
-  // 랭킹 탭 버튼
-  const tabStudentBtn = document.getElementById('tab-student');
-  const tabTeacherBtn = document.getElementById('tab-teacher');
+  // 인게임 우측 랭킹 탭 버튼
+  const sideTabStudentBtn = document.getElementById('side-tab-student');
+  const sideTabTeacherBtn = document.getElementById('side-tab-teacher');
+
+  // 메인 모달 랭킹 탭 버튼
+  const modalTabStudentBtn = document.getElementById('modal-tab-student');
+  const modalTabTeacherBtn = document.getElementById('modal-tab-teacher');
 
   volSlider.addEventListener('input', (e) => {
     initAudio();
@@ -1038,7 +1101,7 @@
   });
 
   // ==========================================
-  // [학생 / 선생님 분리] 명단 및 랭킹 관리
+  // 학생 명단 & 랭킹 데이터 관리
   // ==========================================
   function getStudents() {
     try {
@@ -1104,30 +1167,16 @@
 
     list.sort((a, b) => b.score - a.score);
     localStorage.setItem('whack_unique_rankings_v2', JSON.stringify(list));
-    renderSideRankTable();
+    renderAllRankTables();
     return { isNewBest, bestScore: existing ? existing.score : newScore };
   }
 
-  // '선생님' 포함 여부로 분리하여 렌더링
-  function renderSideRankTable() {
-    const fullList = getRankings();
-    const isTeacherTab = currentRankTab === 'teacher';
-
-    // 필터링: '선생님' 단어 포함 여부
-    const filtered = fullList.filter(item => {
-      const hasTeacherWord = item.name.includes('선생님');
-      return isTeacherTab ? hasTeacherWord : !hasTeacherWord;
-    }).slice(0, 7);
-
-    const tbody = document.getElementById('side-rank-body');
-    if (!tbody) return;
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" style="padding:14px 4px; color:#bcaaa4; font-size:11px;">등록된 기록이 없습니다.</td></tr>`;
-      return;
+  // 랭킹 HTML 행 생성 헬퍼
+  function generateRankRows(list) {
+    if (list.length === 0) {
+      return `<tr><td colspan="3" style="padding:12px 4px; color:#9e9e9e; font-size:11px;">등록된 기록이 없습니다.</td></tr>`;
     }
-
-    tbody.innerHTML = filtered.map((item, idx) => {
+    return list.map((item, idx) => {
       let rowCls = '';
       if (idx === 0) rowCls = 'top1';
       else if (idx === 1) rowCls = 'top2';
@@ -1142,19 +1191,57 @@
     }).join('');
   }
 
-  // 탭 전환 이벤트
-  tabStudentBtn.addEventListener('click', () => {
-    currentRankTab = 'student';
-    tabStudentBtn.classList.add('active');
-    tabTeacherBtn.classList.remove('active');
+  // 인게임 우측 점수판 렌더링
+  function renderSideRankTable() {
+    const fullList = getRankings();
+    const isTeacher = currentSideTab === 'teacher';
+    const filtered = fullList.filter(item => isTeacher ? item.name.includes('선생님') : !item.name.includes('선생님')).slice(0, 7);
+    const tbody = document.getElementById('side-rank-body');
+    if (tbody) tbody.innerHTML = generateRankRows(filtered);
+  }
+
+  // 메인 모달 랭킹 렌더링
+  function renderModalRankTable() {
+    const fullList = getRankings();
+    const isTeacher = currentModalTab === 'teacher';
+    const filtered = fullList.filter(item => isTeacher ? item.name.includes('선생님') : !item.name.includes('선생님')).slice(0, 7);
+    const tbody = document.getElementById('modal-rank-body');
+    if (tbody) tbody.innerHTML = generateRankRows(filtered);
+  }
+
+  function renderAllRankTables() {
+    renderSideRankTable();
+    renderModalRankTable();
+  }
+
+  // 인게임 우측 랭킹 탭 이벤트
+  sideTabStudentBtn.addEventListener('click', () => {
+    currentSideTab = 'student';
+    sideTabStudentBtn.classList.add('active');
+    sideTabTeacherBtn.classList.remove('active');
     renderSideRankTable();
   });
 
-  tabTeacherBtn.addEventListener('click', () => {
-    currentRankTab = 'teacher';
-    tabTeacherBtn.classList.add('active');
-    tabStudentBtn.classList.remove('active');
+  sideTabTeacherBtn.addEventListener('click', () => {
+    currentSideTab = 'teacher';
+    sideTabTeacherBtn.classList.add('active');
+    sideTabStudentBtn.classList.remove('active');
     renderSideRankTable();
+  });
+
+  // 메인 화면 모달 랭킹 탭 이벤트
+  modalTabStudentBtn.addEventListener('click', () => {
+    currentModalTab = 'student';
+    modalTabStudentBtn.classList.add('active');
+    modalTabTeacherBtn.classList.remove('active');
+    renderModalRankTable();
+  });
+
+  modalTabTeacherBtn.addEventListener('click', () => {
+    currentModalTab = 'teacher';
+    modalTabTeacherBtn.classList.add('active');
+    modalTabStudentBtn.classList.remove('active');
+    renderModalRankTable();
   });
 
   // 이름 추가 이벤트
@@ -1182,7 +1269,7 @@
   btnDeleteStudent.addEventListener('click', () => {
     const selected = studentSelect.value;
     if (!selected) return;
-    if (confirm(`'${selected}'을(를) 목록에서 삭제하시겠습니까?`)) {
+    if (confirm(`'${selected}'을(를) 도전자 목록에서 삭제하시겠습니까?`)) {
       let students = getStudents().filter(s => s !== selected);
       saveStudents(students);
       renderStudentSelect();
@@ -1190,7 +1277,7 @@
   });
 
   renderStudentSelect();
-  renderSideRankTable();
+  renderAllRankTables();
 
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
@@ -1222,15 +1309,15 @@
     state.currentPlayer = selectedName;
     valPlayer.textContent = selectedName;
 
-    // 플레이어 성향에 맞춰 랭킹 탭 자동 전환
+    // 플레이어 성향에 맞춰 인게임 랭킹 탭 자동 동기화
     if (selectedName.includes('선생님')) {
-      currentRankTab = 'teacher';
-      tabTeacherBtn.classList.add('active');
-      tabStudentBtn.classList.remove('active');
+      currentSideTab = 'teacher';
+      sideTabTeacherBtn.classList.add('active');
+      sideTabStudentBtn.classList.remove('active');
     } else {
-      currentRankTab = 'student';
-      tabStudentBtn.classList.add('active');
-      tabTeacherBtn.classList.remove('active');
+      currentSideTab = 'student';
+      sideTabStudentBtn.classList.add('active');
+      sideTabTeacherBtn.classList.remove('active');
     }
     renderSideRankTable();
 
@@ -1329,7 +1416,7 @@
     for (let i = 0; i < 9; i++) clearHole(i, false, false);
 
     renderStudentSelect(state.currentPlayer);
-    renderSideRankTable();
+    renderAllRankTables();
     startModal.style.display = 'flex';
     applyButtonCooldown(startModal);
   }
