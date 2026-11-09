@@ -283,18 +283,9 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .side-rank-table tr.top1 td {
-    color: #ff5252;
-    font-size: 13px;
-  }
-
-  .side-rank-table tr.top2 td {
-    color: #ffab40;
-  }
-
-  .side-rank-table tr.top3 td {
-    color: #ffd740;
-  }
+  .side-rank-table tr.top1 td { color: #ff5252; font-size: 13px; }
+  .side-rank-table tr.top2 td { color: #ffab40; }
+  .side-rank-table tr.top3 td { color: #ffd740; }
 
   /* 각 구역 슬롯 */
   .hole-slot {
@@ -309,7 +300,6 @@
     border-radius: 16px;
   }
 
-  /* 구멍 내부 */
   .hole-back {
     position: absolute;
     bottom: 6px;
@@ -321,7 +311,6 @@
     z-index: 1;
   }
 
-  /* 앞쪽 흙 둔덕 */
   .hole-front {
     position: absolute;
     bottom: -6px;
@@ -335,7 +324,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
   }
 
-  /* 두더지 래퍼 */
   .mole-wrapper {
     position: absolute;
     bottom: 12px;
@@ -348,10 +336,7 @@
     cursor: none;
   }
 
-  .mole-wrapper.up {
-    transform: translateY(-8px);
-  }
-
+  .mole-wrapper.up { transform: translateY(-8px); }
   .mole-wrapper.hit {
     transform: translateY(45px) scale(0.92, 0.5) !important;
     transition: transform 0.08s ease-in;
@@ -365,7 +350,6 @@
     filter: drop-shadow(0 8px 8px rgba(0,0,0,0.5));
   }
 
-  /* 타격 성공 시 망치 스매시 */
   .hammer-smash {
     position: absolute;
     top: 0px;
@@ -386,7 +370,6 @@
     100% { transform: rotate(-45deg) translateY(10px) scale(0.85); opacity: 0; }
   }
 
-  /* 만화 팝업 텍스트 */
   .comic-pop {
     position: absolute;
     font-size: 26px;
@@ -405,7 +388,6 @@
     100% { transform: translate(-50%, -65px) scale(1) rotate(0deg); opacity: 0; }
   }
 
-  /* 3초 카운트다운 오버레이 */
   #countdown-overlay {
     position: fixed;
     top: 0;
@@ -436,7 +418,6 @@
     100% { transform: scale(1); opacity: 1; }
   }
 
-  /* 모달 오버레이 */
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -458,16 +439,16 @@
     background: linear-gradient(180deg, #fffde7 0%, #ffffff 100%);
     border: 5px solid #4e342e;
     border-radius: 24px;
-    padding: 20px 24px;
+    padding: 18px 22px;
     text-align: center;
-    max-width: 440px;
+    max-width: 460px;
     width: 92%;
     box-shadow: 0 16px 36px rgba(0,0,0,0.85);
   }
 
   .card-modal h1 {
-    font-size: 26px;
-    margin: 0 0 8px 0;
+    font-size: 25px;
+    margin: 0 0 6px 0;
     color: #e65100;
     text-shadow: 1px 1px 0 #ffe082;
   }
@@ -475,16 +456,16 @@
   .card-modal p {
     font-size: 13px;
     color: #4e342e;
-    line-height: 1.5;
-    margin: 0 0 14px 0;
+    line-height: 1.4;
+    margin: 0 0 10px 0;
     font-weight: bold;
   }
 
   .modal-btn-group {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 10px;
+    margin-top: 12px;
   }
 
   .play-btn {
@@ -492,23 +473,23 @@
     border: 3px solid #bf360c;
     border-radius: 26px;
     color: #fff;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 900;
-    padding: 10px 24px;
+    padding: 9px 22px;
     cursor: pointer;
-    box-shadow: 0 5px 0 #bf360c, 0 8px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 0 #bf360c, 0 6px 10px rgba(0,0,0,0.3);
     transition: all 0.08s ease;
   }
 
   .play-btn.sec {
     background: linear-gradient(180deg, #78909c 0%, #455a64 100%);
     border-color: #263238;
-    box-shadow: 0 5px 0 #263238;
+    box-shadow: 0 4px 0 #263238;
   }
 
   .play-btn:active {
     transform: translateY(3px);
-    box-shadow: 0 2px 0 #bf360c;
+    box-shadow: 0 1px 0 #bf360c;
   }
 
   .disabled-cooldown {
@@ -516,17 +497,77 @@
     opacity: 0.65;
   }
 
-  .name-input {
-    width: 80%;
-    padding: 8px 12px;
-    font-size: 18px;
+  /* 학생 선택 및 관리 패널 스타일 */
+  .student-panel {
+    background: #efebe9;
+    border: 2px solid #bcaaa4;
+    border-radius: 14px;
+    padding: 10px 12px;
+    margin: 8px 0;
+    text-align: left;
+  }
+
+  .student-select-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .student-select-row label {
+    font-size: 13px;
     font-weight: 900;
-    text-align: center;
-    border: 3px solid #ff9800;
-    border-radius: 12px;
-    outline: none;
-    margin-bottom: 10px;
+    color: #3e2723;
+    white-space: nowrap;
+  }
+
+  .student-dropdown {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-weight: 900;
+    border: 2px solid #ff9800;
+    border-radius: 8px;
     background: #fff;
+    outline: none;
+    color: #3e2723;
+  }
+
+  .student-add-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .student-input {
+    flex: 1;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border: 2px solid #bcaaa4;
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+  }
+
+  .student-input:focus {
+    border-color: #ff9800;
+  }
+
+  .small-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 8px;
+    border: none;
+    background: #4e342e;
+    color: #ffd54f;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .small-btn.del {
+    background: #c62828;
+    color: #fff;
   }
 
   .sudden-flash {
@@ -539,46 +580,35 @@
   }
 
   @media (max-width: 840px) {
-    #side-rank-board {
-      width: 170px;
-      padding: 6px 8px;
-    }
-    .side-rank-table {
-      font-size: 11px;
-    }
+    #side-rank-board { width: 170px; padding: 6px 8px; }
+    .side-rank-table { font-size: 11px; }
   }
 
   @media (max-width: 700px) {
-    #main-stage-wrap {
-      flex-direction: column;
-      gap: 10px;
-    }
-    #side-rank-board {
-      width: 100%;
-      max-width: 580px;
-      order: 2;
-    }
+    #main-stage-wrap { flex-direction: column; gap: 10px; }
+    #side-rank-board { width: 100%; max-width: 580px; order: 2; }
   }
 </style>
 </head>
 <body>
 
 <div id="game-viewport">
-  <!-- 상단 컨트롤 버튼 바 -->
   <div id="top-ctrl-bar">
     <div style="display:flex; gap:8px;">
       <button class="ctrl-btn" id="ctrl-restart">다시하기 🔄</button>
-      <button class="ctrl-btn" id="ctrl-exit">메인으로 🏠</button>
+      <button class="ctrl-btn" id="ctrl-exit">도전자 변경 🏠</button>
     </div>
-    <!-- 볼륨 조절 슬라이더 및 음소거 토글 -->
     <div id="sound-ctrl-wrap">
       <button id="audio-toggle" title="음소거 토글">🔊</button>
       <input type="range" id="vol-slider" min="0" max="100" value="80" title="배경음 및 효과음 볼륨">
     </div>
   </div>
 
-  <!-- 우드 아케이드 전광판 HUD -->
   <div id="hud-board">
+    <div class="stat-badge">
+      <div class="stat-label">CHALLENGER</div>
+      <div class="stat-val" id="val-player" style="font-size: 20px; color: #ffd54f;">-</div>
+    </div>
     <div class="stat-badge">
       <div class="stat-label">SCORE</div>
       <div class="stat-val" id="val-score">0</div>
@@ -596,27 +626,25 @@
     </div>
   </div>
 
-  <!-- 동적 서든데스 게이지 (2.5s -> 0.9s) -->
   <div id="survival-container">
     <div id="survival-bar"></div>
     <div id="survival-text">COMBO SURVIVAL (MAX 2.5s)</div>
   </div>
 
-  <!-- 중앙 메인 스테이지 (두더지 필드 + 우측 상시 랭킹) -->
   <div id="main-stage-wrap">
     <div id="field-container">
       <div id="field-grid"></div>
     </div>
 
-    <!-- 우측 상시 노출 1~7등 점수판 -->
+    <!-- 우측 상시 노출 1~7등 점수판 (중복 없는 최고 점수 랭킹) -->
     <div id="side-rank-board">
-      <div id="side-rank-title">🏆 TOP 7 RANKING</div>
+      <div id="side-rank-title">🏆 명예의 전당 (TOP 7)</div>
       <table class="side-rank-table">
         <thead>
           <tr>
             <th>순위</th>
             <th>이름</th>
-            <th>점수</th>
+            <th>최고기록</th>
           </tr>
         </thead>
         <tbody id="side-rank-body"></tbody>
@@ -625,38 +653,30 @@
   </div>
 </div>
 
-<!-- 3초 카운트다운 오버레이 -->
 <div id="countdown-overlay">
   <div id="countdown-num">3</div>
 </div>
 
-<!-- 시작 화면 모달 -->
+<!-- 시작 화면 모달 (학생 선택 및 추가 기능 탑재) -->
 <div id="start-modal" class="modal-overlay">
   <div class="card-modal">
     <h1>두더지 매니아 DX</h1>
-    <p>
-      💥 두더지를 타격하면 <strong>머리 위에 망치</strong>가 내리칩니다!<br>
-      ⚡ <strong>즉시 연계 스폰(Chain Spawning)</strong>: 타격 성공 시 다음 두더지가 즉시 등장!<br>
-      ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 필요 (두더지 놓치면 <strong>-0.1초</strong> 페널티!)<br>
-      💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
-      🔥 <strong>콤보 배율</strong>: 1~10(1.0배), 11~30(1.1배), 31~50(1.4배), 51초과(1.5배)<br>
-      ⚡ <strong>서든데스 규칙</strong>: 두더지 놓치면 제한시간 <strong>-0.1초</strong> 감소 & 게이지 <strong>2.5초 $\rightarrow$ 0.9초</strong> 단축!
-    </p>
+    <p>도전할 학생을 선택하고 시작하세요!</p>
+
+    <div class="student-panel">
+      <div class="student-select-row">
+        <label for="student-select">👤 학생 선택:</label>
+        <select id="student-select" class="student-dropdown"></select>
+        <button class="small-btn del" id="btn-delete-student" title="선택한 학생 삭제">삭제</button>
+      </div>
+      <div class="student-add-row">
+        <input type="text" id="new-student-name" class="student-input" maxlength="7" placeholder="새 학생 이름 입력 (최대 7자)">
+        <button class="small-btn" id="btn-add-student">추가 ➕</button>
+      </div>
+    </div>
+
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-start">게임 시작! 🔨</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOP 7 닉네임 입력 모달 -->
-<div id="name-modal" class="modal-overlay" style="display:none;">
-  <div class="card-modal">
-    <h1>🎉 명예의 전당 등극!</h1>
-    <p><span id="new-rank-pos" style="color:#d84315; font-size:16px;">1위</span> 기록을 달성했습니다!</p>
-    <input type="text" id="player-name-input" class="name-input" maxlength="7" placeholder="이름 (최대 7자)" autofocus>
-    <div class="modal-btn-group">
-      <button class="play-btn" id="btn-save-name">등록하기 ✅</button>
-      <button class="play-btn sec" id="btn-skip-name">건너뛰기</button>
     </div>
   </div>
 </div>
@@ -665,13 +685,14 @@
 <div id="gameover-modal" class="modal-overlay" style="display:none;">
   <div class="card-modal">
     <h1 id="over-title">GAME OVER</h1>
-    <p id="over-desc">최종 순위를 확인하세요!</p>
+    <p id="over-desc">도전 결과</p>
     <div style="font-size: 26px; font-weight:900; color:#d84315;" id="over-score">0점</div>
-    <div style="font-size: 13px; color:#5d4037; margin-bottom: 8px;" id="over-maxcombo">최대 콤보: 0연속</div>
+    <div style="font-size: 13px; color:#5d4037; margin: 4px 0 10px 0;" id="over-detail">최고 콤보: 0연속</div>
+    <div id="record-notify" style="font-size: 14px; font-weight: 900; color: #2e7d32; margin-bottom: 8px;"></div>
     
     <div class="modal-btn-group">
       <button class="play-btn" id="btn-restart">다시 하기 🔄</button>
-      <button class="play-btn sec" id="btn-home">메인 화면 🏠</button>
+      <button class="play-btn sec" id="btn-home">학생 변경 🏠</button>
     </div>
   </div>
 </div>
@@ -682,9 +703,10 @@
 
   const COMBO_GRACE_PERIOD = 2.0;
   const SUDDEN_DEATH_START = 2.5;
-  const SUDDEN_DEATH_MIN = 0.9; // 서든데스 최종 한계 시간 0.9초로 변경
+  const SUDDEN_DEATH_MIN = 0.9;
 
   const state = {
+    currentPlayer: '',
     score: 0,
     timeLeft: 30,
     combo: 0,
@@ -947,6 +969,7 @@
   const valScore = document.getElementById('val-score');
   const valTimer = document.getElementById('val-timer');
   const valCombo = document.getElementById('val-combo');
+  const valPlayer = document.getElementById('val-player');
   const comboGaugeFill = document.getElementById('combo-gauge-fill');
   const labelTimer = document.getElementById('label-timer');
   const survivalContainer = document.getElementById('survival-container');
@@ -954,12 +977,17 @@
   const survivalText = document.getElementById('survival-text');
   const startModal = document.getElementById('start-modal');
   const gameoverModal = document.getElementById('gameover-modal');
-  const nameModal = document.getElementById('name-modal');
   const viewport = document.getElementById('game-viewport');
   const audioToggleBtn = document.getElementById('audio-toggle');
   const volSlider = document.getElementById('vol-slider');
   const countdownOverlay = document.getElementById('countdown-overlay');
   const countdownNum = document.getElementById('countdown-num');
+
+  // 학생 관리 DOM
+  const studentSelect = document.getElementById('student-select');
+  const newStudentInput = document.getElementById('new-student-name');
+  const btnAddStudent = document.getElementById('btn-add-student');
+  const btnDeleteStudent = document.getElementById('btn-delete-student');
 
   volSlider.addEventListener('input', (e) => {
     initAudio();
@@ -982,33 +1010,87 @@
     }
   });
 
+  // ==========================================
+  // [기능 1, 2, 3] 학생 명단 및 중복 없는 최고점수 랭킹 시스템
+  // ==========================================
+  function getStudents() {
+    try {
+      const data = localStorage.getItem('whack_students_list');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+    return ["민준", "서연", "도윤", "지우", "하은"];
+  }
+
+  function saveStudents(list) {
+    localStorage.setItem('whack_students_list', JSON.stringify(list));
+  }
+
+  function renderStudentSelect(selectedName) {
+    const students = getStudents();
+    studentSelect.innerHTML = '';
+    if (students.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = '학생을 추가해주세요';
+      studentSelect.appendChild(opt);
+      return;
+    }
+
+    students.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      if (name === selectedName) opt.selected = true;
+      studentSelect.appendChild(opt);
+    });
+  }
+
+  // 최고 점수 랭킹 (이름별 최고점수 1건만 유지)
   function getRankings() {
     try {
-      const data = localStorage.getItem('whack_rankings_top7');
+      const data = localStorage.getItem('whack_unique_rankings');
       if (data) return JSON.parse(data);
     } catch(e) {}
     return [
-      { name: "ACE", score: 650 },
-      { name: "HAMMER", score: 520 },
-      { name: "SPEEDY", score: 410 },
-      { name: "MOLE", score: 320 },
-      { name: "LUCKY", score: 240 },
-      { name: "ROOKIE", score: 180 },
-      { name: "BEGIN", score: 100 }
+      { name: "민준", score: 450 },
+      { name: "서연", score: 380 },
+      { name: "도윤", score: 290 },
+      { name: "지우", score: 210 },
+      { name: "하은", score: 150 }
     ];
   }
 
-  function saveRankings(list) {
+  function updatePlayerScore(name, newScore) {
+    let list = getRankings();
+    const existing = list.find(item => item.name === name);
+    let isNewBest = false;
+
+    if (existing) {
+      if (newScore > existing.score) {
+        existing.score = newScore;
+        isNewBest = true;
+      }
+    } else {
+      list.push({ name: name, score: newScore });
+      isNewBest = true;
+    }
+
     list.sort((a, b) => b.score - a.score);
-    const top7 = list.slice(0, 7);
-    localStorage.setItem('whack_rankings_top7', JSON.stringify(top7));
-    return top7;
+    localStorage.setItem('whack_unique_rankings', JSON.stringify(list));
+    renderSideRankTable();
+    return { isNewBest, bestScore: existing ? existing.score : newScore };
   }
 
   function renderSideRankTable() {
-    const list = getRankings();
+    const list = getRankings().slice(0, 7);
     const tbody = document.getElementById('side-rank-body');
     if (!tbody) return;
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" style="padding:10px; color:#bcaaa4;">기록 없음</td></tr>`;
+      return;
+    }
+
     tbody.innerHTML = list.map((item, idx) => {
       let rowCls = '';
       if (idx === 0) rowCls = 'top1';
@@ -1023,8 +1105,44 @@
       `;
     }).join('');
   }
+
+  // 학생 추가 버튼 이벤트
+  btnAddStudent.addEventListener('click', () => {
+    const name = newStudentInput.value.trim();
+    if (!name) return;
+    let students = getStudents();
+    if (!students.includes(name)) {
+      students.push(name);
+      saveStudents(students);
+      renderStudentSelect(name);
+      newStudentInput.value = '';
+    } else {
+      alert('이미 등록된 학생 이름입니다.');
+      studentSelect.value = name;
+      newStudentInput.value = '';
+    }
+  });
+
+  newStudentInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btnAddStudent.click();
+  });
+
+  // 학생 삭제 버튼 이벤트
+  btnDeleteStudent.addEventListener('click', () => {
+    const selected = studentSelect.value;
+    if (!selected) return;
+    if (confirm(`'${selected}' 학생을 목록에서 삭제하시겠습니까?`)) {
+      let students = getStudents().filter(s => s !== selected);
+      saveStudents(students);
+      renderStudentSelect();
+    }
+  });
+
+  // 초기 렌더링
+  renderStudentSelect();
   renderSideRankTable();
 
+  // 구멍 9개 생성
   for (let i = 0; i < 9; i++) {
     const slot = document.createElement('div');
     slot.className = 'hole-slot';
@@ -1046,13 +1164,21 @@
     }, 600);
   }
 
+  // 게임 시작 요청 (선택된 학생 이름 검증)
   function requestGameStart() {
+    const selectedName = studentSelect.value;
+    if (!selectedName) {
+      alert('도전할 학생을 먼저 선택하거나 추가해주세요!');
+      return;
+    }
+    state.currentPlayer = selectedName;
+    valPlayer.textContent = selectedName;
+
     if (state.isCountingDown) return;
     initAudio();
 
     startModal.style.display = 'none';
     gameoverModal.style.display = 'none';
-    nameModal.style.display = 'none';
     viewport.classList.remove('sudden-flash');
 
     clearInterval(gameTickInterval);
@@ -1126,14 +1252,6 @@
   document.getElementById('ctrl-restart').addEventListener('click', requestGameStart);
   document.getElementById('ctrl-exit').addEventListener('click', returnToMainMenu);
   document.getElementById('btn-home').addEventListener('click', returnToMainMenu);
-  document.getElementById('btn-skip-name').addEventListener('click', () => {
-    nameModal.style.display = 'none';
-    showGameOverModal();
-  });
-  document.getElementById('btn-save-name').addEventListener('click', saveRankAndProceed);
-  document.getElementById('player-name-input').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') saveRankAndProceed();
-  });
 
   function returnToMainMenu() {
     state.isPlaying = false;
@@ -1145,12 +1263,12 @@
 
     countdownOverlay.style.display = 'none';
     gameoverModal.style.display = 'none';
-    nameModal.style.display = 'none';
     viewport.classList.remove('sudden-flash');
     survivalContainer.style.display = 'none';
 
     for (let i = 0; i < 9; i++) clearHole(i, false, false);
 
+    renderStudentSelect(state.currentPlayer);
     renderSideRankTable();
     startModal.style.display = 'flex';
     applyButtonCooldown(startModal);
@@ -1186,7 +1304,6 @@
       if (state.timeLeft <= 0) enterSuddenDeath();
     } else {
       state.suddenDuration += 0.1;
-      // 2.5초에서 시작하여 0.9초까지 점진적 감소
       state.currentMaxSurvival = Math.max(SUDDEN_DEATH_MIN, SUDDEN_DEATH_START - (state.suddenDuration * 0.05));
       state.survivalTimer -= 0.1;
 
@@ -1235,12 +1352,8 @@
   function ensureSuddenDeathTargets() {
     if (!state.isPlaying || !state.isSuddenDeath) return;
 
-    if (getMoleCount() < 1) {
-      spawnSpecificTarget('mole');
-    }
-    if (getBombCount() < 1) {
-      spawnSpecificTarget('bomb');
-    }
+    if (getMoleCount() < 1) spawnSpecificTarget('mole');
+    if (getBombCount() < 1) spawnSpecificTarget('bomb');
   }
 
   function spawnSpecificTarget(category) {
@@ -1502,6 +1615,7 @@
     setTimeout(() => pop.remove(), 500);
   }
 
+  // [기능 3 적용] 게임 종료 시 학생별 최고 기록 자동 갱신 및 표시
   function endGame(reason) {
     state.isPlaying = false;
     clearInterval(gameTickInterval);
@@ -1510,41 +1624,21 @@
     viewport.classList.remove('sudden-flash');
 
     document.getElementById('over-title').textContent = state.isSuddenDeath ? '서든데스 종료!' : 'TIME UP!';
-    document.getElementById('over-desc').textContent = reason || '멋진 플레이였습니다!';
+    document.getElementById('over-desc').textContent = `${state.currentPlayer} 학생의 도전 종료! (${reason || '플레이 완료'})`;
     document.getElementById('over-score').textContent = `${state.score}점`;
-    document.getElementById('over-maxcombo').textContent = `최고 콤보: ${state.maxCombo}연속`;
+    document.getElementById('over-detail').textContent = `최고 콤보: ${state.maxCombo}연속`;
 
-    const rankings = getRankings();
-    const isTop7 = rankings.length < 7 || state.score > rankings[rankings.length - 1].score;
-
-    if (isTop7 && state.score > 0) {
-      let rankPos = 1;
-      for (let r of rankings) {
-        if (state.score <= r.score) rankPos++;
-        else break;
-      }
-      document.getElementById('new-rank-pos').textContent = `${rankPos}위`;
-      document.getElementById('player-name-input').value = '';
-      nameModal.style.display = 'flex';
-      applyButtonCooldown(nameModal);
-      setTimeout(() => document.getElementById('player-name-input').focus(), 300);
+    // 해당 학생의 최고 점수 갱신 판정
+    const result = updatePlayerScore(state.currentPlayer, state.score);
+    const notifyEl = document.getElementById('record-notify');
+    if (result.isNewBest) {
+      notifyEl.textContent = `🎉 개인 최고 기록 경신! (${result.bestScore}점)`;
+      notifyEl.style.color = '#2e7d32';
     } else {
-      showGameOverModal();
+      notifyEl.textContent = `내 최고 기록: ${result.bestScore}점 (경신 실패)`;
+      notifyEl.style.color = '#c62828';
     }
-  }
 
-  function saveRankAndProceed() {
-    let name = document.getElementById('player-name-input').value.trim() || 'HERO';
-    const list = getRankings();
-    list.push({ name: name.toUpperCase(), score: state.score });
-    saveRankings(list);
-    nameModal.style.display = 'none';
-    renderSideRankTable();
-    showGameOverModal();
-  }
-
-  function showGameOverModal() {
-    renderSideRankTable();
     gameoverModal.style.display = 'flex';
     applyButtonCooldown(gameoverModal);
   }
