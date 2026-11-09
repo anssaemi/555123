@@ -639,7 +639,7 @@
       ⚡ <strong>즉시 연계 스폰(Chain Spawning)</strong>: 타격 성공 시 다음 두더지가 즉시 등장!<br>
       ⏱️ <strong>콤보 유지 시간 2.0초</strong>: 2초 안에 연속 타격 필요 (두더지 놓치면 <strong>-0.1초</strong> 페널티!)<br>
       💣 <strong>폭탄</strong>: -200점 & 콤보 초기화 (서든데스 시 제한시간 <strong>-0.2초</strong> 감소!)<br>
-      🔥 <strong>콤보 보너스</strong>: 1~10(1.1배), 11~30(1.3배), 31~50(1.4배), 50초과(1.5배)<br>
+      🔥 <strong>콤보 배율</strong>: 1~10(1.0배), 11~30(1.1배), 31~50(1.4배), 51초과(1.5배)<br>
       ⚡ <strong>서든데스 규칙</strong>: 두더지 놓치면 제한시간 <strong>-0.1초</strong> & 콤보시간 <strong>-0.1초</strong> 즉시 감소!
     </p>
     <div class="modal-btn-group">
@@ -712,19 +712,17 @@
   let bgmInterval = null;
   let bgmStep = 0;
 
-  // 비프음 없는 또렷하고 맑은 8비트 아케이드 멜로디 (Hz)
   const MELODY = [
-    523.25, 659.25, 783.99, 1046.50, // C5 - E5 - G5 - C6
-    587.33, 698.46, 880.00, 1174.66, // D5 - F5 - A5 - D6
-    659.25, 783.99, 987.77, 1318.51, // E5 - G5 - B5 - E6
-    783.99, 659.25, 587.33, 523.25,  // G5 - E5 - D5 - C5
-    880.00, 698.46, 659.25, 587.33,  // A5 - F5 - E5 - D5
-    783.99, 659.25, 587.33, 523.25,  // G5 - E5 - D5 - C5
-    698.46, 587.33, 523.25, 493.88,  // F5 - D5 - C5 - B4
-    523.25, 783.99, 523.25, 0        // C5 - G5 - C5 - Rest
+    523.25, 659.25, 783.99, 1046.50,
+    587.33, 698.46, 880.00, 1174.66,
+    659.25, 783.99, 987.77, 1318.51,
+    783.99, 659.25, 587.33, 523.25,
+    880.00, 698.46, 659.25, 587.33,
+    783.99, 659.25, 587.33, 523.25,
+    698.46, 587.33, 523.25, 493.88,
+    523.25, 783.99, 523.25, 0
   ];
 
-  // 리듬을 잡아주는 베이스 멜로디 (Hz)
   const BASS = [
     261.63, 261.63, 196.00, 196.00,
     293.66, 293.66, 220.00, 220.00,
@@ -1275,7 +1273,6 @@
 
     const stayTime = getStayDuration();
     hole.timer = setTimeout(() => {
-      // 시간 만료로 들어갈 때는 isNaturalMiss = true 로 호출
       if (hole.active) clearHole(slotIdx, true, true);
     }, stayTime);
   }
@@ -1340,12 +1337,10 @@
 
     const stayTime = getStayDuration();
     hole.timer = setTimeout(() => {
-      // 시간 만료로 들어갈 때는 isNaturalMiss = true 로 호출
       if (hole.active) clearHole(slotIdx, true, true);
     }, stayTime);
   }
 
-  // [수정] 두더지를 잡지 못하고 놓쳤을 때의 페널티 처리
   function clearHole(idx, triggerRespawn = true, isNaturalMiss = false) {
     const hole = state.holes[idx];
     if (hole.timer) clearTimeout(hole.timer);
@@ -1361,11 +1356,9 @@
       el.innerHTML = '';
     }
 
-    // 자연 만료로 두더지를 놓쳤을 때 (폭탄 제외)
     if (isNaturalMiss && state.isPlaying && missedType && missedType !== 'bomb') {
       playSfx('miss');
 
-      // 1) 콤보 유지 시간 0.1초 감소 페널티 (전체 구간 공통 적용)
       if (state.combo > 0) {
         state.comboTimer = Math.max(0, state.comboTimer - 0.1);
         if (state.comboTimer <= 0) {
@@ -1379,7 +1372,6 @@
         }
       }
 
-      // 2) 서든데스 모드에서는 제한시간 0.1초 즉시 감소 페널티
       if (state.isSuddenDeath) {
         state.survivalTimer -= 0.1;
 
@@ -1404,9 +1396,10 @@
     }
   }
 
+  // [수정] 요청하신 신규 콤보 배율 (1~10: 1배, 11~30: 1.1배, 31~50: 1.4배, 51 이상: 1.5배)
   function getComboMultiplier(combo) {
-    if (combo <= 10) return 1.1;
-    if (combo <= 30) return 1.3;
+    if (combo <= 10) return 1.0;
+    if (combo <= 30) return 1.1;
     if (combo <= 50) return 1.4;
     return 1.5;
   }
